@@ -1,0 +1,403 @@
+@startuml auth_state_machine
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<pending>> #FEF3C7
+  BorderColor<<pending>> #B45309
+
+  BackgroundColor<<verified>> #DCFCE7
+  BorderColor<<verified>> #15803D
+
+  BackgroundColor<<admin>> #DBEAFE
+  BorderColor<<admin>> #1D4ED8
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication Account State Machine
+
+' ============================================================
+' SCOPE NOTE
+' Durable account lifecycle states held in the RecruitBook
+' application database. Login/logout and password reset are
+' session/credential events, not lifecycle states (see notes).
+' ============================================================
+
+state "No Account" as NoAccount
+state "Registration Rejected" as RegRejected <<security>>
+state "Email Unverified" as EmailUnverified <<pending>>
+
+state "Active Student" as ActiveStudent <<verified>>
+
+state "Pending Counselor Approval" as PendingCounselor <<pending>>
+state "Verified Counselor" as VerifiedCounselor <<verified>>
+
+state "Pending Admissions Officer Approval" as PendingAdmissions <<pending>>
+state "Verified Admissions Officer" as VerifiedAdmissions <<verified>>
+
+state "Active Platform Administrator" as ActiveAdmin <<admin>>
+
+state "Suspended" as Suspended <<security>>
+state "Unauthorized Access Outcome" as Unauthorized <<security>>
+
+' ============================================================
+' PROTECTED ROUTE ELIGIBILITY (state descriptions)
+' Each durable state advertises the route it is allowed to reach.
+' ============================================================
+
+EmailUnverified : Route → verification required page / restricted
+ActiveStudent : Route → /student/dashboard
+PendingCounselor : Route → /counselor/pending
+VerifiedCounselor : Route → /counselor/dashboard
+PendingAdmissions : Route → /admissions/pending
+VerifiedAdmissions : Route → /admissions/dashboard
+ActiveAdmin : Route → /admin/dashboard
+Suspended : Route → /unauthorized
+RegRejected : Outcome → registration error
+Unauthorized : Outcome → /unauthorized
+
+' ============================================================
+' ENTRY: REGISTRATION & ADMIN PROVISIONING
+' ============================================================
+
+[*] --> NoAccount
+
+NoAccount --> EmailUnverified : public registration succeeds\n[role ∈ {Student, Counselor,\nAdmissions Officer}]
+NoAccount --> RegRejected : public registration attempt\n[role = Platform Administrator]
+NoAccount --> ActiveAdmin : seeded / manual provisioning only\n(never public registration)
+
+' ============================================================
+' EMAIL VERIFICATION → ROLE-RESOLVED STATE
+' Supabase Auth verifies the email; RecruitBook resolves the
+' durable account_status from the stored application role.
+' ============================================================
+
+EmailUnverified --> ActiveStudent : [email verified AND role = Student]
+EmailUnverified --> PendingCounselor : [email verified AND role = Counselor]
+EmailUnverified --> PendingAdmissions : [email verified AND role = Admissions Officer]
+
+' ============================================================
+' ADMIN APPROVAL OF PRIVILEGED ROLES
+' ============================================================
+
+PendingCounselor --> VerifiedCounselor : Platform Administrator\napproves counselor
+PendingAdmissions --> VerifiedAdmissions : Platform Administrator\napproves admissions officer
+
+' ============================================================
+' SUSPENSION (admin denial / security action)
+' ============================================================
+
+PendingCounselor --> Suspended : admin denies / suspends\n/ suspicious registration
+PendingAdmissions --> Suspended : admin denies / suspends\n/ suspicious registration
+ActiveStudent --> Suspended : admin suspension /\nsecurity action
+VerifiedCounselor --> Suspended : admin suspension /\nsecurity action
+VerifiedAdmissions --> Suspended : admin suspension /\nsecurity action
+ActiveAdmin --> Suspended : privileged account\nsuspension / security action
+
+' ============================================================
+' UNAUTHORIZED ROUTING OUTCOME
+' Suspended sessions and any invalid role/status combination
+' resolve to the Unauthorized Access Outcome on a protected
+' route request. Drawn from Suspended only to avoid clutter;
+' the invalid-combination path is covered by the note below.
+' ============================================================
+
+Suspended --> Unauthorized : protected route requested\nwhile suspended
+
+' ============================================================
+' NOTES
+' ============================================================
+
+note right of NoAccount
+  Platform Administrator accounts are
+  never created through public
+  registration. They are seeded or
+  manually provisioned only.
+end note
+
+note bottom of EmailUnverified
+  Supabase Auth verifies identity
+  (email + credentials + session).
+  RecruitBook role and account_status
+  determine authorization. Pending
+  Counselor and Pending Admissions
+  accounts cannot reach verified-user
+  dashboards.
+end note
+
+note right of Suspended
+  Reinstatement: after admin review,
+  a Suspended account returns to its
+  previous valid role state
+  (Active Student, Verified Counselor,
+  Verified Admissions Officer, or
+  Active Platform Administrator).
+  Modeled as a note to avoid a
+  spiderweb of reinstatement arrows.
+  Suspended accounts are denied all
+  protected-route access until then.
+end note
+
+note bottom of Unauthorized
+  Any unknown or invalid role/status
+  combination also resolves here.
+  Protected routing must check the
+  database role and account_status
+  server-side — UI hiding is not
+  authorization.
+end note
+
+note as SessionNote
+  Out of scope as durable states:
+  • Login / logout change session
+    state, not account status.
+  • Password reset changes credentials,
+    not RecruitBook role / account_status.
+  • Login lockout is a security control,
+    not a lifecycle state.
+  • Account deletion is a future slice.
+end note
+
+@enduml

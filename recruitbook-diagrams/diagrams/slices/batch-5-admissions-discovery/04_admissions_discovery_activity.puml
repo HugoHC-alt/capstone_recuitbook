@@ -1,0 +1,142 @@
+@startuml admissions_discovery_activity
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+title RecruitBook Batch 5 — Admissions Discovery Activity (Visibility + Discover/View)
+
+' ============================================================
+' Two partitions, one file: Flow A (student controls visibility)
+' and Flow B (admissions discovers + opens a visible profile).
+' ============================================================
+
+partition "Flow A — Student controls profile visibility" {
+  start
+  :Student opens /student/profile;
+  if (Route guard: role=student AND\naccount_status=active?\n(reuses requireRouteAccess('/student/dashboard'))) then (yes)
+  else (no)
+    #FEE2E2:Redirect to /login or /unauthorized;
+    stop
+  endif
+  :Submit is_published and/or admissions_consent;
+  :Server action re-check\n(assertCurrentActiveStudent —\nindependent of the page guard);
+  if (Active student?) then (yes)
+  else (no)
+    #FEE2E2:Fixed generic error (no redirect);
+    stop
+  endif
+  if (profile_visibility_settings row\nalready exists for this profile?) then (no — first write)
+    :Bare INSERT profile_visibility_settings\n(student_profile_id server-derived;\ngoverned by the INSERT policy only);
+    :Separate owner-scoped SELECT\nto read back the created row\n(first-create-under-RLS pattern);
+  else (yes)
+    :UPDATE is_published / admissions_consent\n(owner-scoped RLS: is_profile_owner(...)\nAND is_active_student() on writes);
+  endif
+  if (RLS satisfied?) then (yes)
+    :Revalidate /student/profile;
+    stop
+  else (no — foreign/stale row)
+    #FEE2E2:Fixed generic error (no oracle);
+    stop
+  endif
+}
+
+note right
+  Effective visibility is NEVER stored.
+  Only the two raw booleans persist;
+  is_published AND admissions_consent
+  is always computed at read time,
+  never cached or derived at write time.
+end note
+
+partition "Flow B — Admissions officer discovers + views a profile" {
+  start
+  :Officer opens /admissions/dashboard;
+  if (Route guard: role=admissions_officer AND\naccount_status=verified?\n(already registered since Batch 1)) then (yes)
+  else (no)
+    #FEE2E2:Redirect to /unauthorized;
+    stop
+  endif
+  :Server-side re-check\n(verified admissions officer —\nindependent of the page guard);
+  if (is_verified_admissions_officer()?) then (yes)
+  else (no)
+    #FEE2E2:Fixed generic error (no oracle);
+    stop
+  endif
+  :Discovery query under RLS\n(SELECT student_profiles\nWHERE is_admissions_visible_profile(id));
+  if (Any filters applied?) then (yes)
+    :Filter operates ONLY on the\nalready RLS-visible result set\n(no separate count/filter oracle);
+  else (no)
+  endif
+  :Officer opens one listed profile,\nor a direct /admissions/students/[id] URL\n([id] is a lookup key only);
+  :Detail query re-checks the SAME gate\nis_admissions_visible_profile(profile_id)\n(re-evaluated, not reused from the list);
+  if (RLS passes?) then (yes)
+    :Render AdmissionsProfileView\n(read-only safe view);
+    stop
+  else (no — hidden / foreign /\nwithdrawn / nonexistent)
+    #FEE2E2:ONE generic "not available" result\n(no existence oracle, no distinction);
+    stop
+  endif
+}
+
+note right
+  is_admissions_visible_profile(profile_id) =
+  verified admissions officer AND a settings
+  row with is_published = true AND
+  admissions_consent = true, evaluated AT
+  QUERY TIME. Withdrawing EITHER flag removes
+  BOTH list and detail access immediately.
+end note
+
+note as N_CrossCutting
+  Cross-cutting rules:
+  * AccessPolicy = server-side authorization check;
+    RowLevelSecurityPolicy = database backstop.
+  * Admissions access is SELECT-only; zero admissions
+    write policy exists anywhere in Batch 5.
+  * Admissions NEVER queries counselor_student_links,
+    counselor_review_requests, or counselor_feedback_notes.
+  * Zero service-role in either flow; RLS is the
+    authoritative backstop, server-action re-checks
+    are never the sole boundary.
+end note
+
+@enduml

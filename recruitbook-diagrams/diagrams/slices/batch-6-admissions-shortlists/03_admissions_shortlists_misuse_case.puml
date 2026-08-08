@@ -1,0 +1,182 @@
+@startuml admissions_shortlists_misuse_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #334155
+}
+
+title RecruitBook Batch 6 — Admissions Shortlists Misuse Case Slice
+
+' Batch 6 prototype subset of the long-term MC-6
+' (Unauthorized Profile Access & Consent Bypass).
+
+actor "Verified Admissions Officer\n(misusing granted shortlist access)" as AdvAO #FFE4E6
+actor "Pending / Suspended /\nUnverified Admissions Officer" as AdvUnverified #FFE4E6
+actor "Malicious /\nOther Student or Counselor" as AdvStudent #FFE4E6
+
+rectangle "Threats" {
+  usecase "MC-B6-1: Keep saved-list /\ndirect-view access to a stale\n(withdrawn/unpublished/\nsuspended-owner) entry" as T1 #FFF1F2
+  usecase "MC-B6-2: Infer withdrawal or\nexistence via saved-list count,\nmessage, or a distinct\nstale-entry state" as T2 #FFF1F2
+  usecase "MC-B6-3: Read, save into, or\nremove ANOTHER officer's\nshortlist entry" as T3 #FFF1F2
+  usecase "MC-B6-4: Forge the owner id\n(admissions_officer_application_\nuser_id) at insert" as T4 #FFF1F2
+  usecase "MC-B6-5: Save a profile that is\nnot currently effectively visible\nor does not resolve to an\navailable profile (hidden,\nunpublished, consent-withdrawn,\nsuspended-owner, deleted, or\nnonexistent)" as T5 #FFF1F2
+  usecase "MC-B6-6: Student or counselor\ndetects they were shortlisted\n(existence, timing, or by whom)" as T6 #FFF1F2
+  usecase "MC-B6-7: Admissions write\nleaks into student_profiles,\nprofile_visibility_settings, or\ncounselor link/review/feedback\ntables" as T7 #FFF1F2
+}
+
+rectangle "Security Controls" {
+  usecase "C1: is_admissions_visible_profile(\nprofile_id) evaluated at QUERY\nTIME on SELECT and INSERT" as C1 #ECFDF5
+  usecase "C2: Silent omission of stale\nentries — no distinct count,\nmessage, or state; fixed generic\nsave/remove results + idempotent\nduplicate save" as C2 #ECFDF5
+  usecase "C3: current_application_user_id()\nownership gate — RLS on SELECT/\nINSERT; enforced directly inside\nthe removal RPC's WHERE clause\n(not a DELETE policy)" as C3 #ECFDF5
+  usecase "C4: Server-derived owner id +\ninsert ownership WITH CHECK\n(client-supplied id never trusted)" as C4 #ECFDF5
+  usecase "C5: is_verified_admissions_officer()\ngate — RLS on INSERT; enforced\ninside the removal RPC (not a\nDELETE policy) (pending/suspended/\nunverified fail either way)" as C5 #ECFDF5
+  usecase "C6: Deny-by-default — zero\nstudent/counselor policy on\nadmissions_shortlist_entries" as C6 #ECFDF5
+  usecase "C7: No NEW admissions write\npolicy outside\nadmissions_shortlist_entries —\nexisting Batch 5 admissions\nSELECT-only access to the four\nprofile tables is UNCHANGED" as C7 #ECFDF5
+}
+
+AdvAO --> T1
+AdvAO --> T2
+AdvAO --> T3
+AdvAO --> T4
+AdvAO --> T5
+AdvAO --> T7
+AdvUnverified --> T3
+AdvStudent --> T6
+
+C1 ..> T1 : breaks
+C1 ..> T5 : breaks
+C2 ..> T2 : breaks
+C3 ..> T3 : breaks
+C5 ..> T3 : breaks
+C4 ..> T4 : breaks
+C6 ..> T6 : breaks
+C7 ..> T7 : breaks
+
+note bottom of C1
+  Same live-gate-at-query-time doctrine as
+  Batch 5 (is_admissions_visible_profile) and
+  Batch 3/4 (is_linked_counselor_for_profile /
+  is_counselor_of_live_accepted_link). No stored
+  or derived visibility field on ShortlistEntry —
+  a withdrawn/unpublished/suspended-owner profile
+  disappears from SELECT immediately, and a
+  hidden, deleted, malformed, or nonexistent
+  profile id fails INSERT with the same fixed
+  generic error. This is a VISIBILITY gate, not
+  an ownership restriction — any verified officer
+  may save any effectively visible profile,
+  including one owned by another student.
+end note
+
+note bottom of C2
+  No distinct "stale entry" state, count, or
+  message anywhere — a hidden entry is simply
+  ABSENT from the live list, never a placeholder.
+  Saving an already-saved profile succeeds with
+  the same fixed generic success (a unique-
+  constraint violation is treated as success,
+  not surfaced). Removing a foreign, stale, or
+  nonexistent entry id matches zero rows and
+  returns the same generic result as removing a
+  real entry — no write-side oracle either.
+end note
+
+note bottom of C3
+  Ownership is a direct column comparison —
+  required on SELECT and INSERT under RLS, and
+  re-implemented directly inside the removal
+  RPC's own WHERE clause for DELETE (AMENDED:
+  there is no direct DELETE RLS policy; see the
+  domain-subset diagram's amendment note). Not
+  merely an application-layer check either way. A
+  crafted/foreign entry id belonging to another
+  officer matches zero rows — under RLS for
+  SELECT/INSERT, inside the RLS-bypassing
+  SECURITY DEFINER RPC for removal.
+end note
+
+note right of C5
+  Removal (via the hardened SECURITY DEFINER RPC
+  remove_own_admissions_shortlist_entry(uuid), NOT
+  a direct DELETE policy) is deliberately NOT
+  visibility-gated (a documented DESIGN CHOICE,
+  not a threat) — so a previously-known but now-
+  stale entry remains removable by its owning
+  officer. The direct-DELETE-policy proposal from
+  Group 1a could not deliver this guarantee
+  (Postgres ANDs SELECT-policy visibility into
+  DELETE row-targeting) and was superseded by this
+  RPC via a independent design-amendment review.
+end note
+
+note as N_Excluded
+  Deliberately NOT modeled as threats or controls
+  (out of scope for Batch 6):
+  * Named or multiple shortlists; entry notes,
+    labels, or tags
+  * Messaging, notifications, search, ranking,
+    exports, AI, uploads
+  * Audit events — explicitly DEFERRED (same
+    deferral as the link/review/visibility audit
+    family; a future SECURITY DEFINER audit RPC
+    family), not an implemented or planned
+    control in this diagram
+end note
+
+note as N_Policy
+  This slice is the Batch 6 prototype subset of
+  the long-term MC-6 model (Unauthorized Profile
+  Access & Consent Bypass) — see recruitbook_
+  misuse_catalog.md Section 12. RLS is the
+  database backstop; zero service-role anywhere
+  in the shortlist surface. Batch 6 adds NO new
+  admissions write policy anywhere outside this
+  one new table. The EXISTING Batch 5 admissions
+  SELECT-only access to student_profiles,
+  academic_backgrounds, profile_activities, and
+  profile_achievements is UNCHANGED and continues
+  to apply alongside this table — it is not
+  removed, narrowed, or replaced.
+  profile_visibility_settings still receives no
+  direct admissions policy (unchanged from Batch
+  5). Counselor link/review/feedback tables still
+  receive zero admissions policy (unchanged).
+end note
+
+@enduml

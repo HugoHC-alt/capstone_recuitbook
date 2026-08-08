@@ -1,0 +1,119 @@
+@startuml admissions_discovery_use_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 5 — Admissions Discovery Use Case Slice
+
+left to right direction
+
+actor "Student\n(profile owner,\nactive)" as Student
+actor "Verified Admissions Officer\n(role=admissions_officer,\nstatus=verified)" as AdmissionsOfficer
+actor "Platform\nAdministrator" as Admin
+
+rectangle "Batch 5 — Admissions Discovery" {
+  usecase "Control profile publication\n(ProfileVisibilitySettings.is_published)" as UC_Publish
+  usecase "Grant or withdraw\nadmissions visibility consent\n(ProfileVisibilitySettings.admissions_consent)" as UC_Consent
+
+  usecase "Discover effectively visible\nstudent profiles\n(StudentDiscoverySearch — plain\nvisible-row list, no ranking/index)" as UC_Discover
+  usecase "Open a visible student profile\n(AdmissionsProfileView — read-only)" as UC_View
+
+  usecase "Read student profile data\n(existing baseline access)" as UC_AdminRead
+}
+
+Student --> UC_Publish
+Student --> UC_Consent
+
+AdmissionsOfficer --> UC_Discover
+AdmissionsOfficer --> UC_View
+
+Admin --> UC_AdminRead
+
+note top of AdmissionsOfficer
+  Discovery and profile viewing require
+  a VERIFIED admissions officer. Pending
+  or suspended admissions-officer accounts
+  are blocked — not successful actors here.
+end note
+
+note right of UC_Consent
+  AccessPolicy gate (role is not enough):
+  a profile is effectively visible only when
+  is_published = TRUE AND
+  admissions_consent = TRUE.
+  A missing settings row, or either flag
+  FALSE, means NOT visible.
+end note
+
+note bottom of UC_Discover
+  Effective visibility is checked by
+  AccessPolicy at QUERY TIME. Withdrawing
+  EITHER flag removes discovery and direct
+  profile access immediately.
+end note
+
+note bottom of UC_View
+  Read-only. AdmissionsProfileView shows
+  only StudentProfile data already gated
+  visible; the admissions officer writes
+  nothing in this batch.
+end note
+
+note right of UC_AdminRead
+  EXISTING platform-admin read-only access
+  (predates Batch 5). Not a new Batch 5
+  capability and NOT governed by the
+  admissions effective-visibility gate.
+end note
+
+note as N_Excluded
+  Deliberately NOT actors / NOT shown:
+  * Pending/suspended admissions officer (verified gate fails)
+  * Counselor (zero access to visibility settings or discovery)
+  * Counselor links, review requests, feedback notes
+  * Shortlists / saved students
+  * Search ranking or a search index
+  * Admissions writes of any kind
+end note
+
+@enduml

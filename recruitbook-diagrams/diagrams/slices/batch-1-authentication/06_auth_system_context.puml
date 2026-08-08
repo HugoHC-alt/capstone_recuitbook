@@ -1,0 +1,367 @@
+@startuml auth_system_context
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication System Context
+
+left to right direction
+
+' ============================================================
+' ACTORS (far left) — interact ONLY through Browser / Client
+' ============================================================
+
+actor "Public Visitor" as PublicVisitor
+actor "Authenticated User" as AuthUser
+actor "Student" as Student
+actor "Counselor" as Counselor
+actor "Admissions Officer" as AdmissionsOfficer
+actor "Platform Administrator" as PlatformAdmin
+
+Student --|> AuthUser
+Counselor --|> AuthUser
+AdmissionsOfficer --|> AuthUser
+PlatformAdmin --|> AuthUser
+
+' ============================================================
+' CLIENT TIER (next) — single entry point for all actors
+' ============================================================
+
+component "User Browser / Client" as Browser <<external>>
+
+' ============================================================
+' RECRUITBOOK APPLICATION TIER (center)
+' App → Route Guard → Protected Routes
+' ============================================================
+
+rectangle "RecruitBook Application Tier" as AppTier #F1F5F9 {
+
+  component "RecruitBook Next.js App" as App
+
+  component "Route Guard / Access Policy\n(server-side · middleware / layout)" as Guard #FEF3C7
+
+  rectangle "Protected Dashboard Routes" as Routes #F8FAFC {
+    card "/student/dashboard\n/counselor/pending\n/counselor/dashboard\n/admissions/pending\n/admissions/dashboard\n/admin/dashboard\n/unauthorized" as RouteList
+  }
+}
+
+' ============================================================
+' EXTERNAL SYSTEMS (right)
+' ============================================================
+
+component "Supabase Auth" as Auth <<external>>
+database "RecruitBook Application Database\n(PostgreSQL)" as DB
+component "Email Service" as Email <<external>>
+
+' ============================================================
+' ACTOR FLOWS — through Browser / Client only
+' ============================================================
+
+PublicVisitor --> Browser : register / login / reset
+AuthUser --> Browser : access dashboards / logout
+PlatformAdmin --> Browser : approve / suspend / reject
+
+' ============================================================
+' MAIN FLOWS — trust boundaries labeled on the arrows
+' ============================================================
+
+Browser --> App : TB-1 · registration, login, logout,\npassword reset requests
+App --> Auth : TB-2 · credential + session requests\n(sign-up, sign-in, verify, reset, sign-out)
+App --> DB : TB-3 · create / read profile,\nread + update role / account_status
+Auth --> Email : TB-4 · verification +\npassword reset emails
+App --> Guard : route request + Supabase session
+Guard --> Routes : TB-5 · authorize → dashboard / pending,\ndeny → /unauthorized
+
+' Route Guard consults the database for the authorization decision
+Guard --> DB : read role / account_status
+
+' ============================================================
+' SECURITY NOTES (instead of extra arrows)
+' ============================================================
+
+note bottom of Auth
+  Supabase Auth authenticates
+  credentials and manages sessions.
+  It does not decide application
+  authorization.
+end note
+
+note bottom of DB
+  Source of truth. Stores role,
+  account_status, approval state,
+  suspension state, and audit logs.
+end note
+
+note bottom of Guard
+  A valid Supabase session is required
+  but not sufficient. Protected routes
+  also require database role/account_status
+  checks. UI hiding alone is not
+  authorization — checks are enforced
+  server-side (middleware / layout).
+  • Pending Counselor / Admissions →
+    pending page, not full dashboard.
+  • Suspended or invalid role/status →
+    /unauthorized.
+end note
+
+note top of App
+  Public registration allows Student,
+  Counselor, and Admissions Officer only.
+  Platform Administrator accounts cannot
+  be created through public registration
+  (seeded / manually provisioned).
+end note
+
+legend bottom
+  Trust boundaries
+  TB-1 Browser ↔ RecruitBook App
+  TB-2 RecruitBook App ↔ Supabase Auth
+  TB-3 RecruitBook App ↔ Application Database
+  TB-4 Supabase Auth / App ↔ Email Service
+  TB-5 RecruitBook App ↔ Protected Routes
+endlegend
+
+@enduml

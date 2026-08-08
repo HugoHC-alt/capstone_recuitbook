@@ -1,0 +1,457 @@
+@startuml auth_domain_subset
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+
+  BackgroundColor<<reference>> #CFFAFE
+  BorderColor<<reference>> #0E7490
+
+  BackgroundColor<<verified-identity>> #DCFCE7
+  BorderColor<<verified-identity>> #15803D
+}
+
+skinparam enum {
+  BackgroundColor #FFFFFF
+  BorderColor #7E22CE
+  FontColor #0F172A
+  HeaderBackgroundColor #F3E8FF
+  StereotypeFontColor #475569
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication Domain Subset
+
+' ============================================================
+' EXTERNAL IDENTITY (Supabase-owned)
+' ============================================================
+
+package "Supabase Auth (external identity)" as PKG_Auth {
+
+  class AuthUserRef <<reference>> {
+    + auth_user_id : uuid
+    + email : text
+    + email_verified : boolean
+    + created_at : timestamp
+  }
+
+  note bottom of AuthUserRef
+    Reference only. Not a RecruitBook-owned
+    password table — passwords and sessions
+    are handled by Supabase Auth.
+  end note
+}
+
+' ============================================================
+' RECRUITBOOK APPLICATION IDENTITY (source of truth)
+' ============================================================
+
+package "RecruitBook Application Identity" as PKG_App {
+
+  class ApplicationUser <<authorization>> {
+    + id : uuid
+    + auth_user_id : uuid
+    + email : text
+    + full_name : text
+    + role : UserRole
+    + account_status : AccountStatus
+    + created_at : timestamp
+    + updated_at : timestamp
+    + last_login_at : timestamp?
+    + suspended_at : timestamp?
+    + suspended_reason : text?
+  }
+
+  enum UserRole {
+    student
+    counselor
+    admissions_officer
+    platform_admin
+  }
+
+  enum AccountStatus {
+    email_unverified
+    active
+    pending_approval
+    verified
+    suspended
+  }
+}
+
+' ============================================================
+' ADMIN APPROVAL OF COUNSELOR / ADMISSIONS ACCOUNTS
+' ============================================================
+
+package "Admin Approval" as PKG_Approval {
+
+  class ApprovalDecision <<review>> {
+    + id : uuid
+    + target_user_id : uuid
+    + decided_by_admin_id : uuid
+    + decision : ApprovalDecisionType
+    + note : text
+    + decided_at : timestamp
+  }
+
+  enum ApprovalDecisionType {
+    approved
+    denied
+  }
+}
+
+' ============================================================
+' AUDIT LOGGING FOR SENSITIVE ACCOUNT ACTIONS
+' ============================================================
+
+package "Audit" as PKG_Audit {
+
+  class AuditLogEntry <<audit>> {
+    + id : uuid
+    + actor_user_id : uuid
+    + target_user_id : uuid?
+    + action : AuditAction
+    + outcome : text
+    + metadata : json
+    + created_at : timestamp
+  }
+
+  enum AuditAction {
+    user_registered
+    email_verified
+    login_succeeded
+    login_failed
+    password_reset_requested
+    password_reset_completed
+    counselor_approved
+    admissions_officer_approved
+    user_suspended
+    unauthorized_access_denied
+  }
+}
+
+' ============================================================
+' PROTECTED ROUTE AUTHORIZATION POLICY
+' ============================================================
+
+package "Protected Routing" as PKG_Policy {
+
+  class ProtectedRoutePolicy <<policy>> {
+    + route_pattern : text
+    + required_role : UserRole
+    + required_status : AccountStatus
+    + fallback_route : text
+  }
+}
+
+' ============================================================
+' RELATIONSHIPS
+' ============================================================
+
+' A Supabase auth user may have one RecruitBook application profile
+AuthUserRef "1" --> "0..1" ApplicationUser : identifies
+
+' ApplicationUser typed by role and status enums
+ApplicationUser --> UserRole : role
+ApplicationUser --> AccountStatus : account_status
+
+' Approval decisions: target account vs deciding admin
+ApplicationUser "1" --> "0..*" ApprovalDecision : target account
+ApplicationUser "1" --> "0..*" ApprovalDecision : deciding admin
+ApprovalDecision --> ApprovalDecisionType : decision
+
+' Audit entries: actor vs target
+ApplicationUser "1" --> "0..*" AuditLogEntry : actor
+ApplicationUser "1" --> "0..*" AuditLogEntry : target
+AuditLogEntry --> AuditAction : action
+
+' Route policy keyed by required role and status
+ProtectedRoutePolicy --> UserRole : required_role
+ProtectedRoutePolicy --> AccountStatus : required_status
+
+' ============================================================
+' CONSTRAINTS & NOTES
+' ============================================================
+
+note top of ApplicationUser
+  Source of truth for authorization.
+  Supabase Auth authenticates credentials
+  and sessions; RecruitBook uses
+  role + account_status to authorize.
+  Password reset changes Supabase
+  credentials only — it must NOT change
+  role or account_status.
+end note
+
+note right of UserRole
+  Public registration may create:
+  student, counselor, admissions_officer.
+  It must NEVER create platform_admin —
+  admin accounts are seeded or manually
+  assigned outside public registration.
+end note
+
+note right of AccountStatus
+  No stored 'unauthorized' status.
+  Unauthorized is a routing result,
+  not a persisted account state.
+  email_unverified users must not
+  access protected dashboards.
+end note
+
+note bottom of ProtectedRoutePolicy
+  Route resolution (required_role + required_status → route):
+  student + active                      → /student/dashboard
+  counselor + pending_approval          → /counselor/pending
+  counselor + verified                  → /counselor/dashboard
+  admissions_officer + pending_approval → /admissions/pending
+  admissions_officer + verified         → /admissions/dashboard
+  platform_admin + active               → /admin/dashboard
+  suspended (any role)                  → /unauthorized (fallback_route)
+end note
+
+note bottom of AuditLogEntry
+  Sensitive actions must create audit
+  records: counselor/admissions approval,
+  user suspension, and unauthorized
+  access denial.
+end note
+
+@enduml

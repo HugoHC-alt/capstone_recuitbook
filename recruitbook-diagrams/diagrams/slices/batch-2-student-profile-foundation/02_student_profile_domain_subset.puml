@@ -1,0 +1,417 @@
+@startuml student_profile_domain_subset
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 2 — Student Profile Foundation Domain Subset
+
+left to right direction
+
+' ============================================================
+' RECRUITBOOK APPLICATION IDENTITY (owned by Batch 1)
+' Shown only for the ownership FK. Not modified by Batch 2.
+' ============================================================
+
+package "Application Identity (Batch 1 — reference)" as PKG_Identity {
+
+  class ApplicationUser <<authorization>> {
+    + id : uuid
+    + auth_user_id : uuid
+    + role : user_role
+    + account_status : account_status
+  }
+
+  note bottom of ApplicationUser
+    Defined by the Batch 1 migration and NOT
+    changed in Batch 2. Only a student-role,
+    active user owns a StudentProfile. Shown
+    here only as the ownership anchor.
+  end note
+}
+
+' ============================================================
+' STUDENT PROFILE FOUNDATION (Batch 2 — new tables)
+' All rows are student-owned. Narrative fields are fixed,
+' plain-text columns on StudentProfile (no separate table).
+' ============================================================
+
+package "Student Profile Foundation (Batch 2)" as PKG_Profile {
+
+  class StudentProfile <<sensitive>> {
+    + id : uuid
+    + application_user_id : uuid  (FK application_users.id, unique)
+    --
+    + preferred_name : text
+    + country : text
+    + city_region : text
+    + intended_major : text
+    --
+    ' Fixed, student-authored narrative fields (plain text only).
+    ' Exact fixed set finalized in the Batch 2 schema group.
+    + narrative_background : text
+    + narrative_goals : text
+    + narrative_activities_summary : text
+    --
+    + created_at : timestamptz
+    + updated_at : timestamptz
+  }
+
+  class AcademicBackground <<sensitive>> {
+    + id : uuid
+    + student_profile_id : uuid  (FK student_profiles.id)
+    + school_name : text
+    + country : text
+    + curriculum : text
+    + graduation_year : int
+    + academic_summary : text
+    + position : int
+    + created_at : timestamptz
+    + updated_at : timestamptz
+  }
+
+  class ProfileActivity <<sensitive>> {
+    + id : uuid
+    + student_profile_id : uuid  (FK student_profiles.id)
+    + title : text
+    + organization : text
+    + description : text
+    + start_year : int
+    + end_year : int
+    + position : int
+    + created_at : timestamptz
+    + updated_at : timestamptz
+  }
+
+  class ProfileAchievement <<sensitive>> {
+    + id : uuid
+    + student_profile_id : uuid  (FK student_profiles.id)
+    + title : text
+    + issuer : text
+    + description : text
+    + received_year : int
+    + position : int
+    + created_at : timestamptz
+    + updated_at : timestamptz
+  }
+}
+
+' ============================================================
+' ROW LEVEL SECURITY (Batch 2 — ownership resolution)
+' Helper-based ownership is the CHOSEN direction.
+' ============================================================
+
+package "Row Level Security (Batch 2)" as PKG_RLS {
+
+  class RowLevelSecurityPolicy <<policy>> {
+    + is_profile_owner(profile_id : uuid) : boolean
+    + is_platform_admin() : boolean
+  }
+}
+
+' ============================================================
+' RELATIONSHIPS
+' ============================================================
+
+' A student-role ApplicationUser may own exactly one StudentProfile.
+ApplicationUser "1" --> "0..1" StudentProfile : owns (student)
+
+' Child tables are strongly owned by the profile (cascade on delete).
+StudentProfile "1" *-- "0..*" AcademicBackground : has
+StudentProfile "1" *-- "0..*" ProfileActivity : has
+StudentProfile "1" *-- "0..*" ProfileAchievement : has
+
+' RLS enforces owner-CRUD / admin-read on the profile aggregate.
+RowLevelSecurityPolicy ..> StudentProfile : enforces access for
+
+' ============================================================
+' OWNERSHIP / SECURITY NOTES
+' ============================================================
+
+note bottom of RowLevelSecurityPolicy
+  CHOSEN ownership direction (helper-based):
+  * StudentProfile ownership resolves via
+    is_profile_owner(profile_id) — a SECURITY
+    DEFINER function mapping auth.uid() ->
+    application_users -> student_profiles.
+  * Child tables (AcademicBackground,
+    ProfileActivity, ProfileAchievement)
+    resolve ownership THROUGH student_profile_id
+    -> is_profile_owner(student_profile_id).
+  * NOT CHOSEN: denormalizing auth_user_id onto
+    every child table. Avoids drift; keeps
+    policies readable.
+  * Ownership is never taken from client input;
+    profile IDs from forms are lookup keys only.
+end note
+
+note top of PKG_Profile
+  RLS policy set (Batch 2):
+  * Student owner: SELECT/INSERT/UPDATE/DELETE
+    on own profile + own child rows.
+  * platform_admin: SELECT (read-only) via
+    is_platform_admin() — moderation/support.
+  * counselor & admissions_officer: NO access
+    to any Batch 2 profile table.
+  * No service-role usage anywhere in Batch 2 —
+    every op runs under the owner's session.
+end note
+
+note bottom of StudentProfile
+  Completion is DERIVED from field presence at
+  read time — there is NO stored completion or
+  profile_status column, and no submission /
+  reviewed / published state in Batch 2.
+  Narrative fields are PLAIN TEXT only.
+end note
+
+' ------------------------------------------------------------
+' Deferred to later batches (intentionally absent here):
+'   visibility/consent settings, verification tier,
+'   self-reported labels, high-school linkage, counselor
+'   support/transcripts, AI contextualization, admissions
+'   views/shortlists, audit entries for profile edits.
+' Those belong to Batch 3 / Batch 4 domain subsets.
+' ------------------------------------------------------------
+
+@enduml

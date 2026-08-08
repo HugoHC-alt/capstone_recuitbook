@@ -1,0 +1,140 @@
+@startuml admissions_shortlists_use_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 6 — Admissions Shortlists Use Case Slice
+
+left to right direction
+
+actor "Verified Admissions Officer\n(role=admissions_officer,\nstatus=verified)" as AdmissionsOfficer
+actor "Platform\nAdministrator" as Admin
+
+rectangle "Batch 6 — Admissions Shortlists" {
+  usecase "Save a currently-visible\nstudent profile to private shortlist\n(ShortlistEntry.save)" as UC_Save
+  usecase "List currently-visible\nsaved students\n(ShortlistEntry.listSaved)" as UC_List
+  usecase "Remove own shortlist entry\n(ShortlistEntry.remove)" as UC_Remove
+
+  usecase "Read shortlist entries\n(ShortlistEntry.readAllEntries —\nread-only, per the existing\nplatform-admin policy pattern)" as UC_AdminRead
+}
+
+AdmissionsOfficer --> UC_Save
+AdmissionsOfficer --> UC_List
+AdmissionsOfficer --> UC_Remove
+
+Admin --> UC_AdminRead
+
+note top of AdmissionsOfficer
+  Every shortlist action requires a VERIFIED
+  admissions officer. Pending or suspended
+  admissions-officer accounts are blocked —
+  not successful actors here.
+end note
+
+note right of UC_Save
+  AccessPolicy gate (WITH CHECK):
+  is_admissions_visible_profile(student_profile_id)
+  must hold at insert time. A hidden or
+  nonexistent profile id fails with the same
+  fixed generic error. Saving an already-saved
+  profile is idempotent — same generic success,
+  no duplicate row, no oracle.
+end note
+
+note bottom of UC_List
+  The saved list is a LIVE, re-gated view,
+  not a static record. Each read re-checks
+  is_admissions_visible_profile(student_profile_id)
+  at query time. A now-hidden/withdrawn/
+  suspended-owner entry disappears immediately
+  with no distinct "stale" state or count; a
+  later re-publish resurfaces it automatically.
+  Rendered rows show only the same four approved
+  discovery-summary fields as the existing
+  discovery list (preferredName, country,
+  cityRegion, intendedMajor) — never a full,
+  unrestricted StudentProfile read.
+end note
+
+note bottom of UC_Remove
+  AMENDED mechanism (post-Group-1a): removal is
+  via the hardened SECURITY DEFINER RPC
+  remove_own_admissions_shortlist_entry(uuid),
+  NOT a direct DELETE policy (none exists; DELETE
+  privilege is revoked from authenticated). The
+  RPC bypasses RLS internally and re-implements
+  ownership + verified-officer checks in its own
+  WHERE clause, deliberately NOT visibility-gated,
+  so a stale entry can still be removed. A foreign,
+  stale, or nonexistent entry id is a silent no-op
+  inside the RPC, returning the same generic
+  result as removing a real entry — no distinction.
+end note
+
+note right of UC_AdminRead
+  Follows the SAME platform-admin read-only
+  POLICY PATTERN established for every prior
+  table — NOT existing access, since this table
+  does not exist yet (Group 1a charter, pending
+  Group 2). Once built, admin access is read-only
+  and not gated by admissions visibility; admin
+  cannot save or remove entries.
+end note
+
+note as N_Excluded
+  Deliberately NOT actors / NOT shown:
+  * Student (zero shortlist visibility of any kind)
+  * Counselor (zero shortlist access of any kind)
+  * Pending/suspended admissions officer (verified gate fails)
+  * Named or multiple shortlists; Shortlist.create(name)
+  * Entry notes, labels, or tags
+  * Search, filters, or ranking
+  * Messaging, notifications, or exports
+  * AI features or uploads
+  * Audit events
+  * Admissions writes to student_profiles,
+    profile_visibility_settings, counselor_student_links,
+    counselor_review_requests, or counselor_feedback_notes
+end note
+
+@enduml

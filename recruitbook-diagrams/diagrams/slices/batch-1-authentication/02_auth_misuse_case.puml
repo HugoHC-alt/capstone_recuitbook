@@ -1,0 +1,454 @@
+@startuml auth_misuse_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication & Access Control — Misuse Cases
+
+left to right direction
+
+' ============================================================
+' LEGITIMATE ACTORS — outside boundary
+' PlatformAdmin appears here because admin mistakes are an
+' insider threat; they are the primary actor for approval abuse.
+' ============================================================
+
+actor "Platform Administrator" as PlatformAdmin
+
+' ============================================================
+' SYSTEM BOUNDARY
+' ============================================================
+
+rectangle "RecruitBook Authentication & Access Control — Misuse Cases" {
+
+  ' ----------------------------------------------------------
+  ' Threat Actors
+  ' Bot and Compromised User specialize from Attacker.
+  ' ----------------------------------------------------------
+
+  package "Attackers" as PKG_Attackers {
+    actor Attacker as Attacker
+    actor Bot as Bot
+    actor "Compromised User" as CompromisedUser
+  }
+
+  Bot --|> Attacker
+  CompromisedUser --|> Attacker
+
+  ' ----------------------------------------------------------
+  ' Misuse Cases — what adversaries do
+  ' Consolidated from 14 to 10 for readability.
+  ' ----------------------------------------------------------
+
+  package "Misuse Cases" as PKG_Misuse {
+    usecase "Registration Abuse" as MUC_RegAbuse
+    usecase "Public Admin\nSelf-Registration Attempt" as MUC_AdminSelfReg
+    usecase "Role Escalation\nDuring Registration" as MUC_RoleEscalation
+    usecase "Email Verification\nLink Abuse" as MUC_VerifyAbuse
+    usecase "Password Reset\nToken Abuse" as MUC_ResetAbuse
+    usecase "Credential Stuffing /\nBrute Force Login" as MUC_BruteForce
+    usecase "Session Token\nTheft and Reuse" as MUC_SessionTheft
+    usecase "Client-Side\nRole Tampering" as MUC_RoleTampering
+    usecase "Unauthorized\nProtected Route Access" as MUC_DirectRoute
+    usecase "Admin Approval\nAbuse or Mistake" as MUC_AdminAbuse
+  }
+
+  ' ----------------------------------------------------------
+  ' Legitimate Use Case Targets — what adversaries attack
+  ' ----------------------------------------------------------
+
+  package "Legitimate Use Case Targets" as PKG_Targets {
+    usecase "Register Account" as UC_Register
+    usecase "Verify Email" as UC_VerifyEmail
+    usecase "Log In" as UC_Login
+    usecase "Complete Password Reset" as UC_CompleteReset
+    usecase "Read Role and Account Status" as UC_ReadRole
+    usecase "Store Role and Account Status" as UC_StoreRole
+    usecase "Access Protected Dashboard" as UC_AccessProtected
+    usecase "Approve Counselor Account" as UC_ApproveCounselor
+    usecase "Approve Admissions Officer Account" as UC_ApproveAdmissions
+    usecase "Suspend User Account" as UC_SuspendUser
+  }
+
+  ' ----------------------------------------------------------
+  ' Security Controls — what breaks the attack path
+  ' ----------------------------------------------------------
+
+  package "Security Controls" as PKG_Controls {
+    usecase "Enforce Public Role Allowlist" as SC_RoleAllowlist
+    usecase "Block Public Admin Registration" as SC_BlockAdmin
+    usecase "Require Email Verification" as SC_RequireVerify
+    usecase "Rate Limit Auth Requests" as SC_RateLimit
+    usecase "Use Single-Use Expiring Tokens" as SC_SingleUse
+    usecase "Authenticate Through Supabase Auth" as SC_SupabaseAuth
+    usecase "Read Role and Status From Database" as SC_ReadRoleDB
+    usecase "Enforce Server-Side Route Guard" as SC_RouteGuard
+    usecase "Restrict Pending and Suspended Accounts" as SC_RestrictAccounts
+    usecase "Require Admin Approval for Privileged Roles" as SC_RequireApproval
+    usecase "Audit Sensitive Account Actions" as SC_Audit
+  }
+
+  ' ----------------------------------------------------------
+  ' External Services — systems that enable security controls
+  ' ----------------------------------------------------------
+
+  package "External Services" as PKG_External {
+    actor "Supabase Auth" as SupabaseAuth <<external>>
+    actor "Email Service" as EmailService <<external>>
+  }
+
+}
+
+' ============================================================
+' ACTOR → MISUSE CASE
+' Each threat actor connects only to the misuse cases they
+' most directly initiate. Avoid duplicating lines.
+' ============================================================
+
+' Bot: automated, high-volume attacks
+Bot --> MUC_RegAbuse
+Bot --> MUC_BruteForce
+
+' Attacker: deliberate exploitation of registration/auth flows
+Attacker --> MUC_AdminSelfReg
+Attacker --> MUC_RoleEscalation
+Attacker --> MUC_VerifyAbuse
+Attacker --> MUC_ResetAbuse
+Attacker --> MUC_DirectRoute
+Attacker --> MUC_RoleTampering
+
+' Compromised User: attacker with a stolen or suspended session
+CompromisedUser --> MUC_SessionTheft
+
+' Platform Administrator: insider error or compromised admin account
+PlatformAdmin --> MUC_AdminAbuse
+
+' ============================================================
+' EXTERNAL SERVICE PARTICIPATION
+' ============================================================
+
+SupabaseAuth --> SC_SupabaseAuth
+EmailService --> SC_RequireVerify
+
+' ============================================================
+' MISUSE CASE — THREATENS (one primary target per misuse case)
+' ============================================================
+
+MUC_RegAbuse ..> UC_Register : threatens
+MUC_AdminSelfReg ..> UC_Register : threatens
+MUC_RoleEscalation ..> UC_StoreRole : threatens
+MUC_VerifyAbuse ..> UC_VerifyEmail : threatens
+MUC_ResetAbuse ..> UC_CompleteReset : threatens
+MUC_BruteForce ..> UC_Login : threatens
+MUC_SessionTheft ..> UC_AccessProtected : threatens
+MUC_RoleTampering ..> UC_ReadRole : threatens
+MUC_DirectRoute ..> UC_AccessProtected : threatens
+MUC_AdminAbuse ..> UC_ApproveCounselor : threatens
+
+' ============================================================
+' MISUSE CASE — MITIGATED BY (one to two controls per misuse case)
+' ============================================================
+
+MUC_RegAbuse ..> SC_RateLimit : mitigated by
+MUC_RegAbuse ..> SC_RequireVerify : mitigated by
+
+MUC_AdminSelfReg ..> SC_BlockAdmin : mitigated by
+
+MUC_RoleEscalation ..> SC_RoleAllowlist : mitigated by
+
+MUC_VerifyAbuse ..> SC_SingleUse : mitigated by
+
+MUC_ResetAbuse ..> SC_SingleUse : mitigated by
+
+MUC_BruteForce ..> SC_RateLimit : mitigated by
+MUC_BruteForce ..> SC_SupabaseAuth : mitigated by
+
+MUC_SessionTheft ..> SC_RouteGuard : mitigated by
+
+MUC_RoleTampering ..> SC_ReadRoleDB : mitigated by
+
+MUC_DirectRoute ..> SC_RouteGuard : mitigated by
+MUC_DirectRoute ..> SC_RestrictAccounts : mitigated by
+
+MUC_AdminAbuse ..> SC_Audit : mitigated by
+MUC_AdminAbuse ..> SC_RequireApproval : mitigated by
+
+' ============================================================
+' NOTES
+' ============================================================
+
+note top of SupabaseAuth
+  Supabase Auth authenticates credentials
+  and issues sessions only. It does not
+  decide RecruitBook application roles.
+  RecruitBook's database is the
+  authoritative source for role and
+  account status.
+end note
+
+note top of UC_Register
+  Public registration allows only Student,
+  Counselor, and Admissions Officer roles.
+  Platform Administrator accounts cannot
+  be self-registered — they must be seeded
+  or manually assigned.
+end note
+
+note bottom of SC_RouteGuard
+  All protected routes must enforce role
+  and account status server-side via
+  middleware, layout checks, or route
+  handlers. UI hiding alone is not
+  authorization. Pending and suspended
+  accounts must not access protected
+  dashboards regardless of valid session.
+end note
+
+note bottom of SC_Audit
+  Approval, suspension, and failed
+  privileged access attempts must
+  be audit logged.
+end note
+
+@enduml

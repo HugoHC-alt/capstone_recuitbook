@@ -1,0 +1,147 @@
+@startuml admissions_shortlists_activity
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+title RecruitBook Batch 6 — Admissions Shortlists Activity (Save / Read + Re-gate)
+
+' ============================================================
+' Two partitions, one file: Flow A (officer saves a visible
+' profile) and Flow B (officer's saved list, re-gated live).
+' Remove is out of scope for this diagram (Group 1e).
+' ============================================================
+
+partition "Flow A — Save to shortlist" {
+  start
+  :Verified officer already on\n/admissions/students/[id]\nfor an already-visible profile;
+  if (Route guard: role=admissions_officer AND\naccount_status=verified?\n(reuses requireRouteAccess('/admissions/dashboard'))) then (yes)
+  else (no)
+    #FEE2E2:Redirect to /unauthorized;
+    stop
+  endif
+  :Officer clicks Save to shortlist\n(control exists ONLY on this detail page —\nnever on the /admissions/dashboard list rows);
+  :Server action re-check\n(is_verified_admissions_officer() —\nindependent of the page guard);
+  if (Verified officer?) then (yes)
+  else (no)
+    #FEE2E2:Fixed generic error (no oracle);
+    stop
+  endif
+  :student_profile_id treated as a lookup key only;
+  :admissions_officer_application_user_id\nserver-derived from caller\n(never client-supplied);
+  :Bare INSERT admissions_shortlist_entries;
+  if (RLS WITH CHECK satisfied?\ncurrent_application_user_id() = owner AND\nis_verified_admissions_officer() AND\nis_admissions_visible_profile(profile_id)) then (yes)
+  else (no — hidden / withdrawn /\nsuspended owner / malformed / nonexistent)
+    #FEE2E2:ONE fixed generic failure\n(no distinction by cause, no oracle);
+    stop
+  endif
+  if (Unique-constraint violation?\n(already saved)) then (yes — duplicate)
+  else (no — first save)
+  endif
+  :Revalidate relevant /admissions route(s);
+  :Fixed generic success\n(duplicate save maps to the SAME\ngeneric success — never surfaced as an error);
+  stop
+}
+
+note right
+  No student-profile ownership restriction:
+  any verified officer may save any
+  effectively-visible profile, regardless of
+  which student owns it. The visibility gate
+  is not an ownership restriction between
+  officers on the student side.
+end note
+
+partition "Flow B — Saved-students read and independent re-gating" {
+  start
+  :Officer opens /admissions/dashboard;
+  if (Route guard: role=admissions_officer AND\naccount_status=verified?\n(existing route guard)) then (yes)
+  else (no)
+    #FEE2E2:Redirect to /unauthorized;
+    stop
+  endif
+  :Server-side re-check\n(is_verified_admissions_officer() —\nindependent of the page guard);
+  if (Verified officer?) then (yes)
+  else (no)
+    #FEE2E2:Fixed generic error (no oracle);
+    stop
+  endif
+  :Query caller's OWN saved entries under RLS\n(admissions_officer_application_user_id\n= current_application_user_id());
+  :EACH entry independently re-evaluates\nis_admissions_visible_profile(profile_id)\nAT QUERY TIME (not cached from save-time);
+  if (Entry's profile currently visible?) then (yes)
+    :Render row — ONLY the four approved\nsummary fields (preferredName, country,\ncityRegion, intendedMajor);
+  else (no — hidden / withdrawn /\nsuspended owner)
+    :Entry silently ABSENT from the list\n(no stale state, no count, no message,\nno placeholder of any kind);
+  endif
+  if (Officer opens a listed profile\n(/admissions/students/[id])?) then (yes)
+    :Existing detail route independently\nre-gates AGAIN (separate re-check,\nnot shared with the list-time gate);
+    if (Still visible at open time?) then (yes)
+      :Render AdmissionsProfileView\n(unchanged read-only view);
+      stop
+    else (no)
+      #FEE2E2:Unchanged generic\n"not available" state;
+      stop
+    endif
+  else (no — stays on dashboard)
+    stop
+  endif
+}
+
+note right
+  A previously-retained entry (saved earlier,
+  now temporarily absent because the profile
+  became hidden) resurfaces automatically once
+  the profile becomes effectively visible again —
+  no re-save needed; the row was never deleted,
+  only its live visibility changed.
+end note
+
+legend right
+  Cross-cutting rules:
+  * RLS is the authoritative backstop; server-side
+    re-checks in both flows are never the sole boundary.
+  * Zero service-role in either flow.
+  * Remove is NOT modeled in this diagram (Group 1e
+    covers save + read/re-gate only).
+  * No student-visible trace anywhere in either flow.
+endlegend
+
+@enduml

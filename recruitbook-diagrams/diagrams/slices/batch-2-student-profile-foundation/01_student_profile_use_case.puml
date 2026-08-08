@@ -1,0 +1,385 @@
+@startuml student_profile_use_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 2 — Student Profile Foundation (Use Cases)
+
+left to right direction
+
+' ============================================================
+' ACTORS
+' Only Student and Platform Administrator connect to Batch 2
+' use cases. Counselor and Admissions Officer are NOT declared
+' as actors here — see the "Deferred Actors / Out of Scope"
+' note below instead of adding dangling actor icons.
+' ============================================================
+
+actor "Student\n(authenticated, active, owner)" as Student
+actor "Platform Administrator" as PlatformAdmin
+
+' ============================================================
+' SYSTEM BOUNDARY
+' ============================================================
+
+rectangle "Batch 2: Student Profile Foundation" {
+
+  ' ----------------------------------------------------------
+  ' Profile Overview & Completion (read)
+  ' Completion is DERIVED from field presence, never stored.
+  ' ----------------------------------------------------------
+
+  package "Profile Overview" as PKG_Overview {
+    usecase "View Profile Overview" as UC_ViewOverview
+    usecase "View Completion Indicator\n(derived, not stored)" as UC_ViewCompletion
+  }
+
+  ' ----------------------------------------------------------
+  ' Profile Editing — owner only
+  ' Each use case writes only the owner's own profile rows.
+  ' ----------------------------------------------------------
+
+  package "Profile Editing (Owner Only)" as PKG_Edit {
+    usecase "Edit Basic Profile Information" as UC_EditBasic
+    usecase "Manage Academic Background" as UC_ManageAcademic
+    usecase "Manage Activities" as UC_ManageActivities
+    usecase "Manage Achievements" as UC_ManageAchievements
+    usecase "Edit Narrative Fields\n(plain text only)" as UC_EditNarrative
+  }
+
+  ' ----------------------------------------------------------
+  ' Admin Moderation — read only
+  ' No admin write path to profile content in Batch 2.
+  ' ----------------------------------------------------------
+
+  package "Admin Moderation (Read Only)" as PKG_Admin {
+    usecase "Read Student Profile\n(moderation / support)" as UC_AdminRead
+  }
+
+}
+
+' ============================================================
+' ACTOR ASSOCIATIONS
+' ============================================================
+
+' --- Student (owner): full CRUD over own profile ---
+' View Completion Indicator is reached via <<include>> from
+' View Profile Overview, so no direct Student association here.
+Student --> UC_ViewOverview
+Student --> UC_EditBasic
+Student --> UC_ManageAcademic
+Student --> UC_ManageActivities
+Student --> UC_ManageAchievements
+Student --> UC_EditNarrative
+
+' --- Platform Administrator: read-only moderation/support ---
+PlatformAdmin --> UC_AdminRead
+
+' ============================================================
+' INCLUDE RELATIONSHIPS
+' ============================================================
+
+' The overview surfaces the derived completion indicator.
+UC_ViewOverview ..> UC_ViewCompletion : <<include>>
+
+' ============================================================
+' NOTES
+' Kept short by design — detailed policy language lives in
+' comments below, not in note boxes, to keep the diagram
+' readable. See diagram_rules.md STYLE-R-06.
+' ============================================================
+
+note top of Student
+  Requires authenticated, active
+  student owner. Ownership enforced
+  server-side and by RLS.
+end note
+
+note bottom of UC_ViewCompletion
+  Derived from field presence.
+  Never a stored column.
+end note
+
+note bottom of UC_EditNarrative
+  Plain text only.
+  No markdown or rich text.
+end note
+
+note bottom of PKG_Admin
+  Read-only. No admin write
+  path to profile content.
+end note
+
+note as N_Deferred
+  Deferred Actors / Out of Scope:
+  Counselor (Batch 3 review),
+  Admissions Officer (Batch 4 discovery).
+  Also deferred: AI contextualization,
+  profile publishing, file uploads,
+  profile photos.
+  No service-role usage in Batch 2.
+end note
+
+' ------------------------------------------------------------
+' Extended policy language (kept out of visible note boxes):
+'
+' - Every Student use case requires application_users.role =
+'   student and account_status = active, checked server-side
+'   via the existing route guard, never trusted from the client.
+' - A Student can never read or edit another Student's profile;
+'   profile IDs submitted from forms are treated only as lookup
+'   keys and re-validated against the owning DB row.
+' - Platform Administrator access uses the existing
+'   is_platform_admin() policy and is limited to read-only
+'   moderation/support; there is no admin write path to profile
+'   content in Batch 2 (admins moderate accounts, not profiles).
+' - No stored profile status (draft/submitted/reviewed/published)
+'   is introduced in Batch 2 — completion is computed, not
+'   persisted, and any submission/status workflow is deferred.
+' - Counselor review (Batch 3) and admissions discovery/search
+'   (Batch 4) are out of scope; those actors are intentionally
+'   absent from this diagram rather than shown unconnected.
+' ------------------------------------------------------------
+
+@enduml

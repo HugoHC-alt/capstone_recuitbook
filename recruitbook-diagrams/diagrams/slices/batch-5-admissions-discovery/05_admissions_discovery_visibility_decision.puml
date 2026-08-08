@@ -1,0 +1,125 @@
+@startuml admissions_discovery_visibility_decision
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+title RecruitBook Batch 5 — Effective Admissions Visibility Decision
+
+' ============================================================
+' NOT a state machine — no named ProfileVisibilitySettings states,
+' no lifecycle transitions, no state-model number. This is the
+' single is_admissions_visible_profile(profile_id) decision,
+' re-evaluated at query time by BOTH discovery and direct view.
+' ============================================================
+
+start
+:Caller requests profile_id\n(via discovery list OR\ndirect /admissions/students/[id]);
+
+if (Access precondition:\nis_verified_admissions_officer()?) then (no)
+  #FEE2E2:NOT VISIBLE\n(role gate fails — pending/\nsuspended/unverified officer);
+  stop
+else (yes)
+endif
+
+if (1. Does a profile_visibility_settings\nrow exist for this profile_id?) then (no)
+  #FEE2E2:NOT VISIBLE\n(missing row is NOT\nimplicitly visible);
+  stop
+else (yes)
+endif
+
+if (2. is_published = true?) then (no)
+  #FEE2E2:NOT VISIBLE;
+  stop
+else (yes)
+endif
+
+if (3. admissions_consent = true?) then (no)
+  #FEE2E2:NOT VISIBLE;
+  stop
+else (yes)
+  #DCFCE7:4. EFFECTIVELY VISIBLE\nto this verified admissions officer;
+  stop
+endif
+
+note right
+  This decision IS
+  is_admissions_visible_profile(profile_id).
+  Evaluated AT QUERY TIME on every call —
+  no derived or cached visibility field
+  exists anywhere. Flipping either
+  is_published or admissions_consent to
+  false immediately returns the profile
+  to NOT VISIBLE on the very next check.
+end note
+
+note right
+  The SAME decision gates BOTH the
+  discovery list (Flow B) and the direct
+  detail route — there is no separate
+  "list visibility" vs "detail visibility."
+end note
+
+note as N_RoleGate
+  is_verified_admissions_officer() is an
+  ACCESS PRECONDITION on the CALLER, not a
+  state of the profile's own lifecycle.
+  It does not change with is_published or
+  admissions_consent, and it is re-checked
+  independently on every request.
+end note
+
+note as N_NotALifecycle
+  Deliberately NOT modeled here (no SM
+  number assigned; not a state machine):
+  * Named ProfileVisibilitySettings states/
+    transitions (e.g. NotPublished,
+    PublishedVisible, PublishedHidden) —
+    the long-term SM-6 model in the master
+    catalogs remains unbuilt.
+  * A separate ConsentSettings table.
+  * Whether an already-visible SUSPENDED
+    student's profile stays visible — an
+    OPEN Group 2 design question, not
+    decided by this diagram either way.
+end note
+
+@enduml

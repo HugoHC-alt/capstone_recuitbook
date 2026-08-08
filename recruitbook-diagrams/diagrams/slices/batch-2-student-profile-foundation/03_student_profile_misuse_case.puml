@@ -1,0 +1,349 @@
+@startuml student_profile_misuse_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 2 — Student Profile Foundation — Misuse Cases
+
+left to right direction
+
+' ============================================================
+' LAYOUT: adversaries (left) -> misuse cases (center) ->
+' grouped security controls (right). One primary control
+' group per misuse case keeps the arrow set small.
+' ============================================================
+
+rectangle "RecruitBook Student Profile Foundation — Misuse Cases" {
+
+  ' ----------------------- LEFT: adversaries -----------------------
+  package "Adversaries" as PKG_Adversaries {
+    actor "Malicious Student" as MaliciousStudent
+    actor "Unauthorized Counselor" as UnauthCounselor
+    actor "Unauthorized\nAdmissions Officer" as UnauthAdmissions
+    actor "Unauthenticated\nAttacker" as UnauthAttacker
+  }
+
+  ' ----------------------- CENTER: misuse cases --------------------
+  ' Labels carry the target, so no separate targets package is needed.
+  package "Misuse Cases" as PKG_Misuse {
+    usecase "Forge profile_id to read\nanother student's profile" as MUC_ReadOther
+    usecase "Forge profile_id to edit\nanother student's profile" as MUC_EditOther
+    usecase "Tamper with client-side\nrole / status" as MUC_RoleTamper
+    usecase "Counselor / admissions\nearly access attempt" as MUC_EarlyAccess
+    usecase "Premature draft\nprofile exposure" as MUC_DraftExposure
+    usecase "Oversized narrative input" as MUC_Oversized
+    usecase "XSS / script payload\nin narrative" as MUC_XSS
+    usecase "Service-role /\nprivileged bypass" as MUC_ServiceRole
+  }
+
+  ' ----------------------- RIGHT: control groups -------------------
+  package "Security Controls" as PKG_Controls {
+    usecase "Route Guard +\nServer Reauthorization" as SC_RouteReauth
+    usecase "Owner-Only RLS +\nOwnership Helper" as SC_OwnerRLS
+    usecase "No Counselor /\nAdmissions Access" as SC_NoCounselorAdmissions
+    usecase "Plain-Text\nNarrative Safety" as SC_PlainText
+    usecase "Zero Service-Role\nUsage" as SC_NoServiceRole
+    usecase "Platform Admin\nRead-Only Access" as SC_AdminReadOnly
+  }
+
+}
+
+' ============================================================
+' ADVERSARY -> MISUSE CASE
+' ============================================================
+
+MaliciousStudent --> MUC_ReadOther
+MaliciousStudent --> MUC_EditOther
+MaliciousStudent --> MUC_DraftExposure
+MaliciousStudent --> MUC_Oversized
+MaliciousStudent --> MUC_XSS
+
+UnauthCounselor --> MUC_EarlyAccess
+UnauthAdmissions --> MUC_EarlyAccess
+
+UnauthAttacker --> MUC_RoleTamper
+UnauthAttacker --> MUC_ServiceRole
+
+' ============================================================
+' MISUSE CASE -> ONE PRIMARY CONTROL GROUP (mitigated by)
+' ============================================================
+
+MUC_ReadOther ..> SC_OwnerRLS : mitigated by
+MUC_EditOther ..> SC_OwnerRLS : mitigated by
+MUC_RoleTamper ..> SC_RouteReauth : mitigated by
+MUC_EarlyAccess ..> SC_NoCounselorAdmissions : mitigated by
+MUC_DraftExposure ..> SC_AdminReadOnly : mitigated by
+MUC_Oversized ..> SC_PlainText : mitigated by
+MUC_XSS ..> SC_PlainText : mitigated by
+MUC_ServiceRole ..> SC_NoServiceRole : mitigated by
+
+' ============================================================
+' NOTES (short)
+' ============================================================
+
+note bottom of SC_OwnerRLS
+  Form IDs are lookup keys only.
+  is_profile_owner(profile_id) resolves
+  ownership; a non-owner reads/writes nothing.
+end note
+
+note bottom of SC_NoCounselorAdmissions
+  No counselor/admissions profile visibility
+  in Batch 2 (deny-by-default). Access is added
+  deliberately in Batch 3 / Batch 4.
+end note
+
+note bottom of SC_PlainText
+  Plain text only: server-side length caps and
+  JSX escaping. No markdown, no
+  dangerouslySetInnerHTML.
+end note
+
+note bottom of SC_AdminReadOnly
+  platform_admin is SELECT-only via
+  is_platform_admin(); no admin write path.
+  Completion is derived, not stored.
+end note
+
+@enduml

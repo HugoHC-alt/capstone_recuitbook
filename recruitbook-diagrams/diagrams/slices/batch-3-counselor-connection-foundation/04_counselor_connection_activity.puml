@@ -1,0 +1,121 @@
+@startuml counselor_connection_activity
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+title RecruitBook Batch 3 — Counselor Connection Flows (Request & Accept/View)
+
+' ============================================================
+' Two partitions, one file. Flow A (student request) and Flow B
+' (counselor accept + read-only view), each with fail-closed
+' branches. Split into 04a/04b only if this overcrowds.
+' ============================================================
+
+partition "Flow A — Student requests a counselor link" {
+  start
+  :Student opens /student/counselor;
+  if (Route guard: role=student AND account_status=active?) then (yes)
+  else (no)
+    #FEE2E2:Redirect to /login or /unauthorized;
+    stop
+  endif
+  :Submit counselor email;
+  :Server action re-check\n(assertCurrentActiveStudent);
+  if (Active student?) then (yes)
+  else (no)
+    #FEE2E2:Fixed error state (no redirect);
+    stop
+  endif
+  :Normalize email (trim + lowercase), validate;
+  :INSERT CounselorStudentLink\nstatus = Requested (same state; DB enum may be `pending`)\ncounselor id NULL; student id server-derived (RLS insert_own);
+  note right
+    No counselor lookup at insert. Same generic
+    "request recorded" whether or not the email
+    belongs to any counselor (anti-enumeration).
+  end note
+  :Revalidate /student/counselor;
+  stop
+}
+
+partition "Flow B — Counselor accepts and views a linked student" {
+  start
+  :Counselor opens /counselor/dashboard;
+  if (Route guard: role=counselor AND account_status=verified?) then (yes)
+  else (no)
+    #FEE2E2:Redirect to /unauthorized;
+    stop
+  endif
+  :See pending requests addressed to own email;
+  :Accept a pending request;
+  :Server action re-check\n(assertCurrentVerifiedCounselor);
+  if (Verified counselor AND email = counselor_email?) then (yes)
+  else (no)
+    #FEE2E2:Fixed generic error (no oracle);
+    stop
+  endif
+  :UPDATE pending row -> accepted,\nself-bind counselor id (WITH CHECK, CAS);
+  if (Exactly one owned row updated?) then (yes)
+  else (no rows — stale / foreign)
+    #FEE2E2:Fixed generic error;
+    stop
+  endif
+  :Open /counselor/students/[id]\n([id] is a lookup key only);
+  if (RLS is_linked_counselor_for_profile passes?\n[accepted link + verified]) then (yes)
+    :Render READ-ONLY Batch 2 profile aggregate;
+    stop
+  else (no)
+    #FEE2E2:Generic not-found (no existence oracle);
+    stop
+  endif
+}
+
+note right
+  Cross-cutting rules:
+  * Revocation is immediate — the ownership helper
+    checks status='accepted' at query time.
+  * Server-action re-auth failure returns a fixed
+    error state, not a redirect (Batch 2 refinement).
+  * Decline / revoke transitions: see SM-13 state machine.
+  * Zero service-role; RLS is the authoritative backstop.
+end note
+
+@enduml

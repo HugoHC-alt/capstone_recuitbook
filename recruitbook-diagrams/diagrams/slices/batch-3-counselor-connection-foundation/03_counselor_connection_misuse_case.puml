@@ -1,0 +1,157 @@
+@startuml counselor_connection_misuse_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+title RecruitBook Batch 3 — Counselor Connection Foundation — Misuse Cases
+
+left to right direction
+
+' ============================================================
+' Adversaries (left) -> misuse cases (center) -> control groups
+' (right). One primary control per misuse case (..> : mitigated by).
+' ============================================================
+
+rectangle "RecruitBook Counselor Connection — Misuse Cases" {
+
+  ' ----------------------- LEFT: adversaries -----------------------
+  package "Adversaries" as PKG_Adv {
+    actor "Malicious Student" as AdvStudent
+    actor "Pending / Unverified\nCounselor" as AdvPending
+    actor "Verified-but-Unlinked\nCounselor" as AdvUnlinked
+    actor "Unauthorized\nAdmissions Officer" as AdvAdmissions
+    actor "Unauthenticated\nAttacker" as AdvAnon
+  }
+
+  ' ----------------------- CENTER: misuse cases --------------------
+  package "Misuse Cases" as PKG_Misuse {
+    usecase "Unverified / pending counselor\naccesses student profiles" as MUC_Unverified
+    usecase "Guess /counselor/students/[id]\nfor an UNLINKED student" as MUC_GuessId
+    usecase "Accept a request addressed to\nANOTHER counselor's email" as MUC_WrongEmail
+    usecase "Student self-accepts\na counselor link" as MUC_SelfAccept
+    usecase "Enumerate counselor existence\nby email" as MUC_Enumerate
+    usecase "Use a REVOKED link\nto keep reading" as MUC_Revoked
+    usecase "Admissions officer reads links\nor linked profile data" as MUC_Admissions
+    usecase "Admin route/policy accidentally gains\nlink-management / link-mutation power\n(Batch 3 admin is SELECT-only)" as MUC_Admin
+  }
+
+  ' ----------------------- RIGHT: control groups -------------------
+  package "Security Controls" as PKG_Ctrl {
+    usecase "Verified-Counselor Gate\n(is_verified_counselor)" as SC_Verified
+    usecase "Accepted-Link RLS, SELECT-only\n(is_linked_counselor_for_profile)" as SC_LinkRLS
+    usecase "Late Email Binding /\nNo Lookup at Insert" as SC_LateBind
+    usecase "Per-Role Transition\nPolicies (CAS)" as SC_Transition
+    usecase "Deny-by-Default\n(no admissions / no admin-write)" as SC_Deny
+  }
+}
+
+' ============================================================
+' ADVERSARY -> MISUSE CASE
+' ============================================================
+AdvPending --> MUC_Unverified
+AdvUnlinked --> MUC_GuessId
+AdvUnlinked --> MUC_WrongEmail
+AdvStudent --> MUC_SelfAccept
+AdvStudent --> MUC_Enumerate
+AdvUnlinked --> MUC_Revoked
+AdvAdmissions --> MUC_Admissions
+AdvAnon --> MUC_Admissions
+AdvStudent --> MUC_Admin
+
+' ============================================================
+' MISUSE CASE -> ONE PRIMARY CONTROL GROUP (mitigated by)
+' ============================================================
+MUC_Unverified ..> SC_Verified : mitigated by
+MUC_GuessId ..> SC_LinkRLS : mitigated by
+MUC_WrongEmail ..> SC_Transition : mitigated by
+MUC_SelfAccept ..> SC_Transition : mitigated by
+MUC_Enumerate ..> SC_LateBind : mitigated by
+MUC_Revoked ..> SC_LinkRLS : mitigated by
+MUC_Admissions ..> SC_Deny : mitigated by
+MUC_Admin ..> SC_Deny : mitigated by
+
+' ============================================================
+' NOTES (short)
+' ============================================================
+note bottom of SC_LinkRLS
+  Form / route IDs are lookup keys only. Zero rows ->
+  one generic not-found. Counselor policies are
+  SELECT-only (no write). Revocation is immediate
+  (status='accepted' checked at query time).
+end note
+
+note bottom of SC_LateBind
+  No counselor lookup at request time; identical
+  "pending" + generic response regardless of email
+  validity. (A Declined status reveals existence only
+  by the counselor's own act — an accepted trade-off.)
+end note
+
+note bottom of SC_Transition
+  INSERT forces status=pending + NULL counselor id
+  (student cannot self-accept). Accept/decline require
+  a verified counselor whose email = counselor_email,
+  self-binding via WITH CHECK.
+end note
+
+note bottom of SC_Deny
+  No admissions policy and no admin write policy on any
+  Batch 3 table. platform_admin is SELECT-only on links.
+end note
+
+@enduml

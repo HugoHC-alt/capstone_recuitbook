@@ -1,0 +1,38 @@
+# Dependencies
+/node_modules/
+/.pnp/
+.pnp.*
+
+# Tests and coverage
+/coverage/
+
+# Next.js output
+/.next/
+/out/
+/build/
+/dist/
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# TypeScript output
+*.tsbuildinfo
+next-env.d.ts
+
+# Supabase local state
+/supabase/.branches/
+/supabase/.temp/
+
+# Deployment and editor state
+/.vercel/
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs and local certificates
+*.log
+*.pem
+

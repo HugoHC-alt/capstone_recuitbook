@@ -1,0 +1,536 @@
+@startuml secure_domain_class_diagram
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Secure Domain Class Diagram
+
+left to right direction
+
+' ============================================================
+' PACKAGE: Identity & Access
+' ============================================================
+
+package "Identity & Access" {
+
+  class "UserAccount" as UserAccount <<security>> {
+    register(email: string, password: string, role: Role): EmailVerificationToken
+    blockProfilePublishingUntilVerified(): Void
+  }
+
+  class "Role" as Role <<authorization>> {
+    canAccess(resource: string, action: string): boolean
+  }
+
+  class "EmailVerificationToken" as EmailVerificationToken <<security>> {
+    validate(): boolean
+    markConsumed(): EmailVerificationToken
+  }
+
+  class "AuditLogEntry" as AuditLogEntry <<audit>> {
+    recordAccessDenied(user: UserAccount, resource: object, reason: string): AuditLogEntry
+  }
+
+}
+
+' ============================================================
+' PACKAGE: Student Profile
+' ============================================================
+
+package "Student Profile" {
+
+  class "StudentProfile" as StudentProfile <<sensitive>> {
+    publish(): StudentProfile
+    isVisibleToAdmissions(): boolean
+    preventSelfVerifiedTranscriptUpload(): Void
+  }
+
+  class "IdentityInformation" as IdentityInformation <<sensitive>> {
+  }
+
+  class "AcademicRecord" as AcademicRecord <<sensitive>> {
+  }
+
+  class "NarrativeResponse" as NarrativeResponse <<sensitive>> {
+  }
+
+  class "ProfileItem" as ProfileItem <<trust>> {
+  }
+
+  class "ProfileVisibilitySettings" as ProfileVisibilitySettings <<privacy>> {
+  }
+
+  class "ConsentSettings" as ConsentSettings <<privacy>> {
+  }
+
+  class "VerificationTier" as VerificationTier <<trust>> {
+  }
+
+  class "SelfReportedLabel" as SelfReportedLabel <<trust>> {
+  }
+
+  class "HighSchool" as HighSchool <<institution>> {
+  }
+
+}
+
+' ============================================================
+' PACKAGE: Counselor Trust
+' ============================================================
+
+package "Counselor Trust" {
+
+  class "CounselorInvitation" as CounselorInvitation <<security>> {
+    validate(email: string): boolean
+    markConsumed(): CounselorInvitation
+  }
+
+  class "CounselorProfile" as CounselorProfile <<trust>> {
+    markVerified(decision: VerificationDecision): CounselorProfile
+  }
+
+  class "VerificationQueueItem" as VerificationQueueItem <<review>> {
+  }
+
+  class "VerificationDecision" as VerificationDecision <<audit>> {
+    approve(admin: UserAccount, counselor: CounselorProfile, note: string): VerificationDecision
+    deny(admin: UserAccount, counselor: CounselorProfile, reason: string): VerificationDecision
+  }
+
+}
+
+' ============================================================
+' PACKAGE: Transcript Support
+' ============================================================
+
+package "Transcript Support" {
+
+  class "TranscriptSupportRequest" as TranscriptSupportRequest <<workflow>> {
+    submitTranscript(counselor: CounselorProfile, file: UploadedFile): TranscriptSupportRequest
+  }
+
+  class "Transcript" as Transcript <<sensitive>> {
+  }
+
+  class "UploadedFile" as UploadedFile <<storage>> {
+  }
+
+  class "FileValidationRule" as FileValidationRule <<policy>> {
+    validate(file: UploadedFile): boolean
+    rejectInvalidFile(file: UploadedFile): Void
+  }
+
+}
+
+' ============================================================
+' PACKAGE: AI Review
+' ============================================================
+
+package "AI Review" {
+
+  class "AIConsentRecord" as AIConsentRecord <<privacy>> {
+    recordConsent(studentProfile: StudentProfile, consentGiven: boolean): AIConsentRecord
+    withdrawConsent(studentProfile: StudentProfile): AIConsentRecord
+  }
+
+  class "AIContextualizationRequest" as AIContextualizationRequest <<workflow>> {
+    validateEligibility(): boolean
+  }
+
+  class "AIContextualizationOutput" as AIContextualizationOutput <<AI-generated>> {
+    labelAsAIGenerated(): AIContextualizationOutput
+  }
+
+  class "StudentAIReviewDecision" as StudentAIReviewDecision <<review>> {
+    accept(output: AIContextualizationOutput): StudentAIReviewDecision
+    reject(output: AIContextualizationOutput, reason: string): StudentAIReviewDecision
+  }
+
+  class "HumanReviewDecision" as HumanReviewDecision <<review>> {
+    approve(reviewer: UserAccount, output: AIContextualizationOutput, note: string): HumanReviewDecision
+    reject(reviewer: UserAccount, output: AIContextualizationOutput, reason: string): HumanReviewDecision
+  }
+
+  class "AIOutputPolicy" as AIOutputPolicy <<policy>> {
+    canDisplay(output: AIContextualizationOutput): boolean
+    hideAfterConsentWithdrawal(output: AIContextualizationOutput): AIContextualizationOutput
+  }
+
+}
+
+' ============================================================
+' PACKAGE: Admissions Discovery
+' ============================================================
+
+package "Admissions Discovery" {
+
+  class "UniversityAccount" as UniversityAccount <<institution>> {
+  }
+
+  class "AdmissionsOfficerProfile" as AdmissionsOfficerProfile <<trust>> {
+    openDiscoveryPage(): StudentDiscoverySearch
+  }
+
+  class "StudentDiscoverySearch" as StudentDiscoverySearch <<workflow>> {
+    excludeHiddenProfiles(): Void
+  }
+
+  class "AdmissionsProfileView" as AdmissionsProfileView <<safe-view>> {
+    render(officer: AdmissionsOfficerProfile, profile: StudentProfile): AdmissionsProfileView
+  }
+
+  class "Shortlist" as Shortlist <<privacy>> {
+    addProfile(profile: StudentProfile): ShortlistEntry
+  }
+
+  class "ShortlistEntry" as ShortlistEntry <<value-object>> {
+    open(officer: AdmissionsOfficerProfile): AdmissionsProfileView
+  }
+
+}
+
+' ============================================================
+' PACKAGE: Security Policies
+' ============================================================
+
+package "Security Policies" {
+
+  class "AccessPolicy" as AccessPolicy <<policy>> {
+    requireVerifiedCounselor(counselor: CounselorProfile): Void
+    requireSameHighSchool(counselor: CounselorProfile, profile: StudentProfile): Void
+    authorizeAdmissionsProfileView(officer: AdmissionsOfficerProfile, profile: StudentProfile): boolean
+  }
+
+  class "RowLevelSecurityPolicy" as RowLevelSecurityPolicy <<policy>> {
+    enforceProfileAccess(user: UserAccount, profile: StudentProfile): boolean
+  }
+
+}
+
+' ============================================================
+' RELATIONSHIPS
+' ============================================================
+
+' --- Identity & Access ---
+UserAccount "1" --> "1" Role : has
+UserAccount "1" --> "0..1" StudentProfile : owns
+UserAccount "1" --> "0..1" CounselorProfile : owns
+UserAccount "1" --> "0..1" AdmissionsOfficerProfile : owns
+UserAccount "1" --> "0..*" EmailVerificationToken : verified by
+
+' --- Student Profile ---
+StudentProfile "1" *-- "1" IdentityInformation : has
+StudentProfile "1" *-- "1..*" AcademicRecord : has
+StudentProfile "1" *-- "0..*" NarrativeResponse : has
+StudentProfile "1" *-- "0..*" ProfileItem : has
+StudentProfile "1" *-- "1" ProfileVisibilitySettings : has
+StudentProfile "1" *-- "1" ConsentSettings : has
+StudentProfile "1" --> "1" VerificationTier : has
+StudentProfile "1" --> "0..*" SelfReportedLabel : has
+StudentProfile "0..*" --> "1" HighSchool : linked to
+
+' --- Counselor Trust ---
+HighSchool "1" --> "0..*" CounselorProfile : has
+CounselorInvitation "1" ..> "0..1" CounselorProfile : creates
+CounselorProfile "1" --> "1" VerificationQueueItem : reviewed through
+VerificationQueueItem "1" --> "0..1" VerificationDecision : resolved by
+
+' --- Transcript Support ---
+StudentProfile "1" --> "0..*" TranscriptSupportRequest : creates
+TranscriptSupportRequest "0..*" --> "1" CounselorProfile : assigned to
+TranscriptSupportRequest "1" --> "0..1" Transcript : produces
+Transcript "1" *-- "1" UploadedFile : contains
+FileValidationRule "1" ..> "0..*" UploadedFile : validates
+
+' --- AI Review ---
+StudentProfile "1" --> "0..*" AIConsentRecord : has
+StudentProfile "1" --> "0..*" AIContextualizationRequest : creates
+AIContextualizationRequest "1" --> "1..*" NarrativeResponse : uses
+AIContextualizationRequest "1" --> "0..1" AIConsentRecord : uses
+AIContextualizationRequest "1" --> "0..1" AIContextualizationOutput : produces
+AIContextualizationOutput "1" --> "0..1" StudentAIReviewDecision : reviewed by
+AIContextualizationOutput "1" --> "0..1" HumanReviewDecision : reviewed by
+AIOutputPolicy "1" ..> "0..*" AIContextualizationOutput : controls
+
+' --- Admissions Discovery ---
+UniversityAccount "1" --> "0..*" AdmissionsOfficerProfile : has
+AdmissionsOfficerProfile "1" --> "0..*" StudentDiscoverySearch : performs
+AdmissionsOfficerProfile "1" --> "0..*" AdmissionsProfileView : opens
+AdmissionsProfileView "1" ..> "1" StudentProfile : renders
+AdmissionsProfileView "1" ..> "0..*" AIContextualizationOutput : includes
+AdmissionsOfficerProfile "1" *-- "0..*" Shortlist : owns
+Shortlist "1" *-- "0..*" ShortlistEntry : contains
+
+' --- Security Policy dependencies ---
+AccessPolicy "1" ..> "0..*" StudentProfile : authorizes
+AccessPolicy "1" ..> "0..*" CounselorProfile : requires verified
+AccessPolicy "1" ..> "0..*" AdmissionsOfficerProfile : requires approved
+AccessPolicy "1" ..> "0..*" ProfileVisibilitySettings : checks
+AccessPolicy "1" ..> "0..*" ConsentSettings : checks
+RowLevelSecurityPolicy "1" ..> "0..*" StudentProfile : enforces
+
+' ============================================================
+' SECURITY NOTES
+' ============================================================
+
+note right of AccessPolicy
+Role alone is not sufficient.
+AccessPolicy checks ownership,
+verification, same-school rules,
+visibility, consent, and account status.
+end note
+
+note right of AIOutputPolicy
+AI output is visible only after
+student acceptance, human approval,
+active consent, and AI-generated labeling.
+end note
+
+note right of ShortlistEntry
+Saved shortlist entries must recheck
+current publication, visibility,
+consent, and authorization.
+end note
+
+@enduml

@@ -1,0 +1,102 @@
+@startuml counselor_review_misuse_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #334155
+}
+
+title RecruitBook Batch 4 — Counselor Review Misuse Case Slice
+
+actor "Malicious /\nOther Student" as BadStudent #FFE4E6
+actor "Unlinked / Revoked /\nWrong Counselor" as BadCounselor #FFE4E6
+actor "Pending or Suspended\nCounselor" as PendingCounselor #FFE4E6
+actor "Admissions\nOfficer" as Admissions #FFE4E6
+
+rectangle "Threats" {
+  usecase "MC-B4-1: Forge or edit\ncounselor feedback\n(fake endorsement)" as T1 #FFF1F2
+  usecase "MC-B4-2: Self-approve —\nflip own request to\ncompleted/declined" as T2 #FFF1F2
+  usecase "MC-B4-3: Read/act on the\nreview queue without a\nlive accepted link" as T3 #FFF1F2
+  usecase "MC-B4-4: Respond to or attach\nfeedback on ANOTHER\ncounselor's request" as T4 #FFF1F2
+  usecase "MC-B4-5: Keep review access\nafter the student revokes\nthe link" as T5 #FFF1F2
+  usecase "MC-B4-6: Mutate student-owned\nprofile tables through the\nreview flow" as T6 #FFF1F2
+  usecase "MC-B4-7: Probe stale/foreign\nreview ids for existence\n(oracle / raw errors)" as T7 #FFF1F2
+  usecase "MC-B4-8: Admissions officer\nreads review/feedback data" as T8 #FFF1F2
+}
+
+rectangle "Security Controls" {
+  usecase "No student INSERT/UPDATE policy on\ncounselor_feedback_notes +\ntable-wide REVOKE UPDATE\n(immutable)" as C1 #ECFDF5
+  usecase "Student UPDATE WITH CHECK forces\nstatus='withdrawn' only;\ncolumn grants exclude content" as C2 #ECFDF5
+  usecase "is_counselor_of_live_accepted_link()\ntests status='accepted'\nAT QUERY TIME" as C3 #ECFDF5
+  usecase "Respond/feedback CAS scoped to the\nrequest's own counselor id +\nlive link (zero rows => generic)" as C4 #ECFDF5
+  usecase "NO counselor write policy on any\nBatch 2 profile table\n(deliberate absence, unchanged)" as C5 #ECFDF5
+  usecase "Lookup-keys-only + one fixed\ngeneric message; raw DB errors\nnever surfaced" as C6 #ECFDF5
+  usecase "Zero admissions policies on both\nnew tables (deny-by-default)" as C7 #ECFDF5
+  usecase "is_verified_counselor() gate\n(pending/suspended fail)" as C8 #ECFDF5
+}
+
+BadStudent --> T1
+BadStudent --> T2
+BadCounselor --> T3
+BadCounselor --> T4
+BadCounselor --> T5
+BadCounselor --> T6
+BadStudent --> T7
+BadCounselor --> T7
+PendingCounselor --> T3
+Admissions --> T8
+
+C1 ..> T1 : blocks
+C2 ..> T2 : blocks
+C3 ..> T3 : blocks
+C8 ..> T3 : blocks
+C4 ..> T4 : blocks
+C3 ..> T5 : blocks
+C5 ..> T6 : blocks
+C6 ..> T7 : blocks
+C7 ..> T8 : blocks
+
+note bottom of C3
+  Revocation removes the counselor's ENTIRE
+  review surface immediately: queue, respond,
+  feedback write, and re-reading own past notes.
+  Student's read of received feedback survives
+  (ownership-only SELECT) — deliberate asymmetry.
+end note
+
+@enduml

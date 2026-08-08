@@ -1,0 +1,115 @@
+@startuml admissions_discovery_domain_subset
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  AttributeFontColor #0F172A
+  AttributeFontSize 13
+}
+
+title RecruitBook Batch 5 — Admissions Discovery Domain Subset
+
+left to right direction
+
+' Reused object (Batch 2 — unchanged this batch)
+class StudentProfile <<sensitive>> {
+  id : uuid
+  application_user_id : uuid
+  ' Batch 2 content columns unchanged.
+  ' NO stored visibility/consent columns here.
+}
+
+' New Batch 5 object — the single prototype table
+class ProfileVisibilitySettings <<privacy>> {
+  id : uuid
+  student_profile_id : uuid UNIQUE
+  is_published : boolean = false
+  admissions_consent : boolean = false
+  ' one row per StudentProfile; a MISSING row means not visible
+}
+
+class AdmissionsProfileView <<safe-view>> {
+  ' read-only render of an effectively-visible StudentProfile;
+  ' the admissions officer writes nothing through this view
+}
+
+class AccessPolicy <<policy>> {
+  authorizeAdmissionsProfileView(officer, profile) : boolean
+}
+
+class RowLevelSecurityPolicy <<policy>> {
+  is_verified_admissions_officer() : boolean
+  is_admissions_visible_profile(profile_id) : boolean
+  ' reuses: current_application_user_id(), is_platform_admin()
+}
+
+StudentProfile "1" -- "0..1" ProfileVisibilitySettings : has
+RowLevelSecurityPolicy ..> ProfileVisibilitySettings : reads is_published,\nadmissions_consent
+RowLevelSecurityPolicy ..> StudentProfile : gates admissions SELECT
+AccessPolicy ..> AdmissionsProfileView : authorizes
+AdmissionsProfileView ..> StudentProfile : renders (read-only, gated)
+
+note right of ProfileVisibilitySettings
+  Effective visibility is strictly:
+  is_published AND admissions_consent
+  A MISSING settings row, or either flag
+  FALSE, means the profile is NOT visible.
+  No stored derived visibility field —
+  always computed, never cached.
+end note
+
+note bottom of RowLevelSecurityPolicy
+  Both helpers are checked at QUERY TIME,
+  so withdrawing either flag removes
+  admissions access immediately.
+  Admissions writes nothing in Batch 5.
+  Zero admissions policy on any counselor
+  link, review, or feedback table.
+end note
+
+note as N_Excluded
+  Deliberately NOT modeled:
+  * A separate ConsentSettings table
+  * A publication/admissions lifecycle state machine
+  * StudentDiscoverySearch as a search index; no SearchIndex,
+    ranking, shortlists, or saved students
+  * VerificationTier / SelfReportedLabel
+  * AI, uploads, messaging, audit events
+  * CounselorStudentLink, CounselorReviewRequest,
+    CounselorFeedbackNote
+  * Admissions writes of any kind
+end note
+
+@enduml

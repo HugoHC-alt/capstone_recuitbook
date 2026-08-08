@@ -1,0 +1,336 @@
+@startuml
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Use Case Diagram
+
+left to right direction
+
+' ---------- Primary actors ----------
+actor Student
+actor Counselor
+actor PlatformAdministrator
+actor AdmissionsOfficer
+
+' ---------- External / supporting systems (outside RecruitBookApp) ----------
+cloud "EmailService" as EmailService <<external>>
+cloud "AIService" as AIService <<external>>
+
+rectangle "RecruitBookApp" {
+
+  ' ---------- Primary use cases (UC-1 .. UC-6) ----------
+  usecase "UC-1: Student Registration & Email Verification" as UC1
+  usecase "UC-2: Counselor Onboarding & Verification" as UC2
+  usecase "UC-3: Student Profile Creation, Editing,\nPreview, and Publication" as UC3
+  usecase "UC-4: Counselor Student Support &\nTranscript Upload" as UC4
+  usecase "UC-5: AI Contextualization Request,\nReview, and Approval" as UC5
+  usecase "UC-6: Admissions Officer Search &\nStudent Profile Review" as UC6
+
+  ' ---------- Included security use cases ----------
+  usecase "Email Verification" as SEC_EMAIL
+  usecase "Counselor Verification" as SEC_CVER
+  usecase "File Validation" as SEC_FILE
+  usecase "Student Review of AI Output" as SEC_STUREV
+  usecase "Human Review of AI Output" as SEC_AIREV
+  usecase "Visibility and Consent Check" as SEC_VIS
+  usecase "Authorization Check" as SEC_AUTHZ
+}
+
+' ---------- Student associations ----------
+Student --> UC1
+Student --> UC3
+Student --> UC4 : requests support
+Student --> UC5
+
+' ---------- Counselor associations ----------
+Counselor --> UC2
+Counselor --> UC4 : submits support/transcript
+Counselor --> UC5
+
+' ---------- Platform administrator associations ----------
+PlatformAdministrator --> UC2
+PlatformAdministrator --> UC5
+
+' ---------- Admissions officer associations ----------
+AdmissionsOfficer --> UC6
+
+' ---------- External system associations ----------
+UC1 --> EmailService
+UC2 --> EmailService
+UC5 --> AIService
+
+' ---------- Security include relationships ----------
+UC1 ..> SEC_EMAIL : <<include>>
+UC2 ..> SEC_CVER : <<include>>
+UC4 ..> SEC_FILE : <<include>>
+UC4 ..> SEC_AUTHZ : <<include>>
+UC5 ..> SEC_STUREV : <<include>>
+UC5 ..> SEC_AIREV : <<include>>
+UC6 ..> SEC_VIS : <<include>>
+UC6 ..> SEC_AUTHZ : <<include>>
+
+' ---------- Security constraints ----------
+note bottom of SEC_FILE
+FileValidationRule.validate(file: UploadedFile): boolean
+end note
+
+note bottom of SEC_VIS
+ProfileVisibilitySettings and ConsentSettings checks;
+StudentDiscoverySearch.excludeHiddenProfiles(): Void
+end note
+
+note bottom of SEC_AUTHZ
+AccessPolicy must check role, ownership,
+verification, visibility, consent, and
+same-school rules. Role alone is not enough.
+end note
+
+note bottom of SEC_AIREV
+AI output becomes admissions-visible only after
+student acceptance and counselor/admin approval,
+with active consent and AI-generated label.
+end note
+
+@enduml

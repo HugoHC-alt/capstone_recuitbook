@@ -1,0 +1,158 @@
+@startuml admissions_shortlists_domain_subset
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  AttributeFontColor #0F172A
+  AttributeFontSize 13
+}
+
+title RecruitBook Batch 6 — Admissions Shortlists Domain Subset
+
+left to right direction
+
+' Reused object (Batch 5 — unchanged this batch)
+class AdmissionsOfficerProfile <<trust>> {
+  id : uuid
+  application_user_id : uuid
+  ' verified-officer identity (Batch 5); unchanged this batch
+}
+
+' Reused object (Batch 2 — unchanged this batch)
+class StudentProfile <<sensitive>> {
+  id : uuid
+  application_user_id : uuid
+  ' Batch 2 content columns unchanged.
+  ' NO shortlist-related column of any kind here.
+}
+
+' New Batch 6 object — the single prototype table
+class ShortlistEntry <<value-object>> {
+  id : uuid
+  admissions_officer_application_user_id : uuid
+  student_profile_id : uuid
+  created_at : timestamptz
+  ' server-derived owner id at insert (never client-supplied)
+  ' UNIQUE (officer, profile); NO other columns
+}
+
+class RowLevelSecurityPolicy <<policy>> {
+  current_application_user_id() : uuid
+  is_verified_admissions_officer() : boolean
+  is_admissions_visible_profile(profile_id) : boolean
+  ' current_application_user_id() reused unchanged (Batch 1/2)
+}
+
+AdmissionsOfficerProfile "1" *-- "0..*" ShortlistEntry : owns (Batch 6 — direct,\nno Shortlist container;\nmatched on application_user_id)
+ShortlistEntry "0..*" --> "1" StudentProfile : references (lookup key only)
+RowLevelSecurityPolicy ..> ShortlistEntry : ownership gate — current_application_user_id()\n= admissions_officer_application_user_id\n(SELECT, INSERT via RLS; removal via a\nSECURITY DEFINER RPC, not a DELETE policy)
+RowLevelSecurityPolicy ..> StudentProfile : is_admissions_visible_profile(\nstudent_profile_id) at query time
+RowLevelSecurityPolicy ..> AdmissionsOfficerProfile : is_verified_admissions_officer()\nreads role/status
+
+note right of ShortlistEntry
+  Batch 6 refinement: this IS the catalog
+  ShortlistEntry object, refined into the
+  future table admissions_shortlist_entries.
+  There is no separate "AdmissionsShortlistEntry"
+  class — same catalog name, one new table.
+  Bare reference only: no student content is
+  denormalized onto this row (no preferred name,
+  no country, no major, etc.). Every read renders
+  live StudentProfile summary data through the
+  existing visibility gate, never a cached copy.
+end note
+
+note bottom of RowLevelSecurityPolicy
+  Three distinct gates, re-evaluated at QUERY TIME
+  (not "both helpers" — ownership is now its own
+  named gate alongside the two Batch 5 helpers):
+  * current_application_user_id() — ownership gate
+    (admissions_officer_application_user_id = self):
+    required on SELECT and INSERT (RLS), and
+    re-implemented directly inside the removal
+    RPC's own WHERE clause (DELETE is NOT an RLS
+    policy — see the amendment note below).
+  * is_verified_admissions_officer() — required on
+    INSERT (RLS) and inside the removal RPC
+    (not on SELECT).
+  * is_admissions_visible_profile(profile_id) —
+    required on SELECT and INSERT; removal is
+    deliberately NOT visibility-gated, so a stale
+    entry can still be removed.
+  A stale, withdrawn, or suspended-owner profile
+  disappears from SELECT immediately — no cached
+  or derived visibility field, no updated_at, and
+  no update trigger for this table.
+  --
+  AMENDMENT (post-Group-1a): there is no direct
+  DELETE RLS policy. Postgres implicitly ANDs a
+  table's SELECT policies into DELETE row-
+  targeting, so a visibility-gated SELECT policy
+  would silently veto any DELETE policy before its
+  own USING clause is consulted — a stale entry
+  could never actually be reached. Removal instead
+  goes exclusively through a hardened SECURITY
+  DEFINER function, remove_own_admissions_
+  shortlist_entry(entry_id), which bypasses RLS
+  internally and re-implements ownership +
+  verified-officer authorization itself. DELETE
+  privilege is revoked from authenticated, making
+  the RPC the provably sole removal path.
+end note
+
+note as N_Ratification
+  This is a Group 1a PROPOSED shape only,
+  not implemented schema. It requires the
+  mandatory pre-migration design
+  review at Group 2 before any migration
+  is written.
+end note
+
+note as N_Excluded
+  Deliberately NOT modeled:
+  * Shortlist object/table — no named or
+    multiple shortlists per officer
+  * Entry notes, labels, or tags
+  * updated_at / any update trigger or path
+  * Direct officer/entry access to
+    ProfileVisibilitySettings — mediated
+    ONLY by is_admissions_visible_profile(...)
+  * Student or Counselor access of any kind
+  * Search, filters, ranking, messaging,
+    notifications, exports, AI, uploads,
+    audit events
+end note
+
+@enduml

@@ -1,0 +1,122 @@
+@startuml admissions_discovery_misuse_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #334155
+}
+
+title RecruitBook Batch 5 — Admissions Discovery Misuse Case Slice
+
+' Batch 5 prototype subset of the long-term MC-6
+' (Unauthorized Profile Access & Consent Bypass).
+
+actor "Verified Admissions Officer\n(misusing granted access)" as AdvAO #FFE4E6
+actor "Pending / Suspended /\nUnverified Admissions Officer" as AdvUnverified #FFE4E6
+actor "Malicious /\nOther Student" as AdvStudent #FFE4E6
+
+rectangle "Threats" {
+  usecase "MC-B5-1: Read an unpublished,\nmissing-settings, or consent-false\nprofile (discover or direct view)" as T1 #FFF1F2
+  usecase "MC-B5-2: Bypass consent by relying\non only ONE visibility flag\n(published OR consented, not both)" as T2 #FFF1F2
+  usecase "MC-B5-3: Enumerate profiles by\nguessing /admissions/students/[id]\n(existence oracle)" as T3 #FFF1F2
+  usecase "MC-B5-4: Infer non-visible profiles\nvia discovery count / filter\nbehavior (oracle)" as T4 #FFF1F2
+  usecase "MC-B5-5: Read or write ANOTHER\nstudent's profile_visibility_settings" as T5 #FFF1F2
+  usecase "MC-B5-6: Write anything as an\nadmissions officer (edit profile\nor flip a visibility flag)" as T6 #FFF1F2
+  usecase "MC-B5-7: Discover / view profiles\nwithout a VERIFIED admissions\nofficer account" as T7 #FFF1F2
+  usecase "MC-B5-8: Read counselor links,\nreview requests, or feedback\nnotes as admissions" as T8 #FFF1F2
+  usecase "MC-B5-9: Keep discovery / view\naccess after the student withdraws\neither flag (stale visibility)" as T9 #FFF1F2
+}
+
+rectangle "Security Controls" {
+  usecase "C1: is_verified_admissions_officer()\ngate (pending/suspended/unverified\nfail)" as C1 #ECFDF5
+  usecase "C2: is_admissions_visible_profile(profile_id) =\nverified admissions officer AND a settings row with\nis_published = true AND admissions_consent = true,\nevaluated AT QUERY TIME" as C2 #ECFDF5
+  usecase "C3: Owner-scoped student RLS on\nprofile_visibility_settings\n(is_profile_owner; write = active student)" as C3 #ECFDF5
+  usecase "C4: Additive SELECT-only admissions\nRLS on the four Batch 2 profile tables\n(NO admissions write policy anywhere)" as C4 #ECFDF5
+  usecase "C5: Generic 'unavailable' for hidden/\nforeign/nonexistent ids; discovery\nlists ONLY RLS-visible rows" as C5 #ECFDF5
+  usecase "C6: Zero admissions policy on\ncounselor_student_links / review /\nfeedback tables (deny-by-default)" as C6 #ECFDF5
+}
+
+AdvAO --> T1
+AdvAO --> T2
+AdvAO --> T3
+AdvAO --> T4
+AdvAO --> T6
+AdvAO --> T8
+AdvAO --> T9
+AdvStudent --> T5
+AdvUnverified --> T7
+
+C2 ..> T1 : breaks
+C2 ..> T2 : breaks
+C5 ..> T3 : breaks
+C5 ..> T4 : breaks
+C3 ..> T5 : breaks
+C4 ..> T6 : breaks
+C1 ..> T7 : breaks
+C6 ..> T8 : breaks
+C2 ..> T9 : breaks
+
+note bottom of C2
+  Strict AND, no partial-visibility state:
+  a MISSING settings row, or either flag
+  FALSE, is NOT visible. Evaluated at query
+  time, so withdrawing either flag removes
+  discovery AND direct view immediately.
+  No stored/derived visibility field.
+end note
+
+note bottom of C5
+  Lookup-keys-only + one fixed generic
+  response: hidden, foreign, and nonexistent
+  ids are indistinguishable (no existence
+  oracle). Discovery/filter operates only
+  over the RLS-visible row set (no count/
+  filter oracle over non-visible profiles).
+end note
+
+note as N_Policy
+  AccessPolicy is the server-side authorization check;
+  RowLevelSecurityPolicy is the database backstop
+  (zero service-role). Admissions access is SELECT-only
+  and never touches the Batch 3/4 counselor tables.
+  This slice is the Batch 5 prototype subset of the
+  long-term MC-6 model — no Shortlist, SearchIndex,
+  ranking, AI output, VerificationTier, or audit events.
+end note
+
+@enduml

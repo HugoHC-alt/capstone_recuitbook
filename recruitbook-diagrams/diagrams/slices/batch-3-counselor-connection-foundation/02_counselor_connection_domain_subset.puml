@@ -1,0 +1,392 @@
+@startuml counselor_connection_domain_subset
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 3 — Counselor Connection Foundation Domain Subset
+
+left to right direction
+
+' ============================================================
+' BATCH 1 IDENTITY (reference only — NOT modified by Batch 3)
+' Both the requesting student and the accepting counselor are
+' ApplicationUsers; role/status are read server-side only.
+' ============================================================
+package "Application Identity (Batch 1 — reference)" as PKG_Identity {
+
+  class ApplicationUser <<authorization>> {
+    + id : uuid
+    + auth_user_id : uuid
+    + email : text
+    + role : user_role
+    + account_status : account_status
+  }
+
+  note bottom of ApplicationUser
+    Batch 1 table, unmodified. A student (active)
+    requests; a counselor (verified) accepts.
+    Client-supplied role/status/id are never trusted.
+  end note
+}
+
+' ============================================================
+' BATCH 2 PROFILE AGGREGATE (reference — collapsed)
+' Counselor visibility flows through here to the child tables.
+' ============================================================
+package "Student Profile (Batch 2 — reference)" as PKG_Profile {
+
+  class StudentProfile <<sensitive>> {
+    + id : uuid
+    + application_user_id : uuid  (FK application_users.id, unique)
+    --
+    basic identity + fixed narrative fields
+    child tables: academic_backgrounds,
+    profile_activities, profile_achievements
+  }
+
+  note bottom of StudentProfile
+    Owner CRUD unchanged. A verified counselor
+    gets SELECT-only via an ACCEPTED link.
+    Visibility resolves to child tables through the
+    existing student_profile_id / is_profile_owner chain.
+  end note
+}
+
+' ============================================================
+' COUNSELOR CONNECTION (Batch 3 — the single NEW object)
+' ============================================================
+package "Counselor Connection (Batch 3 — new)" as PKG_Link {
+
+  class CounselorStudentLink <<authorization>> {
+    + id : uuid
+    + student_application_user_id : uuid  (FK application_users.id)
+    + counselor_email : text  (normalized: trim + lowercase)
+    + counselor_application_user_id : uuid  (FK, NULL until counselor response)
+    + status : link_status  (Requested / Accepted / Declined / Revoked)
+    --
+    + requested_at : timestamptz
+    + responded_at : timestamptz
+    + revoked_at : timestamptz
+    + created_at : timestamptz
+    + updated_at : timestamptz
+  }
+}
+
+' ============================================================
+' ROW LEVEL SECURITY (Batch 3 — helper-based, mirrors Batch 2)
+' ============================================================
+package "Row Level Security (Batch 3)" as PKG_RLS {
+
+  class RowLevelSecurityPolicy <<policy>> {
+    + is_verified_counselor() : boolean
+    + is_linked_counselor_for_profile(profile_id : uuid) : boolean
+    --
+    ' reused, unchanged, from Batch 1 / Batch 2:
+    + is_active_student() : boolean
+    + current_application_user_id() : uuid
+    + is_platform_admin() : boolean
+  }
+}
+
+' ============================================================
+' RELATIONSHIPS
+' ============================================================
+ApplicationUser "1\n(student)" --> "0..*" CounselorStudentLink : requests
+ApplicationUser "0..1\n(counselor)" --> "0..*" CounselorStudentLink : bound at accept
+CounselorStudentLink ..> StudentProfile : accepted link grants\nSELECT-only
+RowLevelSecurityPolicy ..> CounselorStudentLink : enforces transitions
+RowLevelSecurityPolicy ..> StudentProfile : enforces counselor SELECT
+
+' ============================================================
+' NOTES
+' ============================================================
+note bottom of CounselorStudentLink
+  CHOSEN direction (email-addressed late binding):
+  * States are Requested / Accepted / Declined / Revoked
+    (catalog + UI names). A future DB enum may store them
+    lowercase (Requested = `pending`) — SAME state, not a
+    second workflow step. New rows start in Requested.
+  * Student identity is SERVER-DERIVED:
+    student_application_user_id comes from the authenticated
+    user, NEVER from the form. Client-supplied ids/emails are
+    input/lookup values only — never authorization proof.
+  * counselor_application_user_id stays NULL until a VERIFIED
+    counselor addressed by the normalized counselor_email
+    RESPONDS: accept OR decline self-binds it (WITH CHECK, CAS).
+    Accepted grants SELECT-only visibility; Declined is terminal
+    with none.
+  * Unique ACTIVE (student, counselor_email) pair;
+    after Declined/Revoked a new request = NEW row.
+  * No token / no email invitation; this is NOT
+    CounselorInvitation (admin onboarding, SM-3).
+end note
+
+note top of PKG_Link
+  Prototype refinement: a per-student CONSENT link
+  supersedes the HighSchool school-match model for
+  implemented batches (HighSchool is not built).
+  Recorded in docs/project-context/architecture-decisions.md.
+end note
+
+note bottom of RowLevelSecurityPolicy
+  Batch 3 RLS set (owner/consent-scoped):
+  * Student: SELECT/INSERT/UPDATE(own, revoke-only) on own links
+    (student_application_user_id server-derived, never from form).
+  * Verified counselor: SELECT addressed rows; UPDATE a
+    Requested addressed row to Accepted/Declined (CAS).
+  * Counselor SELECT-only on the four profile tables via
+    is_verified_counselor() AND is_linked_counselor_for_profile().
+  * platform_admin: SELECT-only on links.
+  * counselor writes to profile data: NONE (no policy).
+  * admissions_officer: NO policy (deny-by-default).
+  * Zero service-role anywhere in Batch 3.
+end note
+
+' ------------------------------------------------------------
+' Deferred (intentionally absent): HighSchool / school-match,
+' CounselorInvitation onboarding, review/feedback objects,
+' profile_status, admissions views, AI, uploads.
+' ------------------------------------------------------------
+
+@enduml

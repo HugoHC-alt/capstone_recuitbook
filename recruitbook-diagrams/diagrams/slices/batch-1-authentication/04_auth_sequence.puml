@@ -1,0 +1,436 @@
+@startuml auth_sequence
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication, Role Identity & Protected Routing (Sequence)
+
+' ============================================================
+' PARTICIPANTS — exactly the six required, no more
+' ============================================================
+
+actor       "User / Browser"        as User
+participant "RecruitBook App"        as App
+participant "Supabase Auth"          as Auth   <<external>>
+database    "RecruitBook Database"   as DB
+participant "Email Service"          as Email  <<external>>
+actor       "Platform Administrator" as Admin
+
+autonumber
+
+note over Auth, DB
+  Supabase Auth handles credentials and sessions.
+  RecruitBook Database stores role and account_status.
+  Authentication is NOT authorization.
+end note
+
+' ============================================================
+== Registration and Email Verification ==
+' ============================================================
+
+User -> App : Submit email, password, selected role
+App -> App : Validate selected role against\npublic role allowlist
+
+alt Role not allowed (Platform Administrator selected)
+  App --> User : Reject registration\n(admins cannot self-register)
+  note over App
+    Public users cannot register as
+    Platform Administrator. Admin
+    accounts are seeded / manually
+    provisioned.
+  end note
+else Allowed public role (Student / Counselor / Admissions Officer)
+  App -> Auth : Sign-up request (email, password)
+  Auth -> Auth : Create auth user
+  Auth -> Email : Trigger verification email
+  Email --> User : Deliver verification link
+  App -> DB : Create application user profile
+  App -> DB : Store role + account_status = email_unverified
+  Auth --> App : Sign-up accepted
+
+  User -> Auth : Click verification link
+  Auth -> Auth : Validate verification token
+
+  alt Email verification succeeds
+    Auth --> App : Email verified
+    App -> DB : Confirm account_status by role:\nStudent → active\nCounselor → pending_approval\nAdmissions Officer → pending_approval
+    App --> User : Verified — proceed to login
+  else Token invalid / expired / already used
+    Auth --> App : Verification failed
+    App --> User : Show verification error\n(request a new link)
+  end
+end
+
+' ============================================================
+== Login and Role-Based Redirect ==
+' ============================================================
+
+User -> App : Submit login credentials
+App -> Auth : Authenticate credentials
+
+alt Authentication failed
+  Auth --> App : Auth failure
+  App --> User : Show login error
+else Authentication succeeds
+  Auth --> App : Valid session (token)
+  App -> DB : Query application user profile
+  alt Missing application profile
+    DB --> App : No profile found
+    App --> User : Account recovery / error state
+  else Profile exists
+    DB --> App : Return role + account_status
+    alt Suspended or invalid role/status combination
+      App --> User : Redirect to /unauthorized
+    else Valid role/status
+      App --> User : Redirect per routing table
+      note over App, DB
+        Routing table (role + account_status → route):
+        Student + active                      → /student/dashboard
+        Counselor + pending_approval          → /counselor/pending
+        Counselor + verified                  → /counselor/dashboard
+        Admissions Officer + pending_approval → /admissions/pending
+        Admissions Officer + verified         → /admissions/dashboard
+        Platform Administrator + active/verified → /admin/dashboard
+        suspended / invalid combination       → /unauthorized
+      end note
+    end
+  end
+end
+
+' ============================================================
+== Protected Dashboard Request ==
+' ============================================================
+
+User -> App : Request protected dashboard route
+App -> Auth : Check Supabase session
+
+alt No valid session
+  Auth --> App : Session missing / expired
+  App --> User : Redirect to /login
+else Valid session
+  Auth --> App : Session valid
+  App -> DB : Read role + account_status
+  DB --> App : Return role + account_status
+  App -> App : Compare requested route\nvs required role/status
+  alt Unauthorized role/status
+    App --> User : Redirect to /unauthorized
+  else Authorized role/status
+    App --> User : Render requested dashboard
+  end
+end
+
+note over App, DB
+  UI hiding is not authorization.
+  Protected routes must enforce
+  server-side / middleware / layout
+  role and account_status checks.
+end note
+
+' ============================================================
+== Admin Approval and Suspension ==
+' ============================================================
+
+Admin -> App : Open admin dashboard
+App -> Auth : Verify admin session
+Auth --> App : Session valid
+App -> DB : Read admin role + account_status
+DB --> App : Return role + account_status
+
+alt Admin not authorized
+  App --> Admin : Redirect to /unauthorized
+else Admin authorized
+  App --> Admin : Render /admin/dashboard
+
+  opt Approval action
+    Admin -> App : Approve pending counselor /\nadmissions officer account
+    App -> DB : Update account_status\npending_approval → verified
+    App -> DB : Record audit log entry (approval)
+    App --> Admin : Approval confirmed
+  end
+
+  opt Suspension action
+    Admin -> App : Suspend user account
+    App -> DB : Update account_status → suspended
+    App -> DB : Record audit log entry (suspension)
+    App --> Admin : Suspension confirmed
+    note over App, DB
+      Suspended user is denied all future
+      protected dashboard access (see
+      Protected Dashboard Request).
+    end note
+  end
+end
+
+' ============================================================
+== Password Reset and Logout ==
+' ============================================================
+
+User -> App : Request password reset
+App -> Auth : Start password reset
+Auth -> Email : Send password reset email
+Email --> User : Deliver reset link
+User -> Auth : Click reset link
+Auth -> Auth : Validate reset token
+
+alt Token invalid / expired / used
+  Auth --> App : Reset failed
+  App --> User : Show reset error
+else Token valid
+  User -> Auth : Submit new password
+  Auth -> Auth : Update password
+  Auth --> App : Password updated
+  App --> User : Return to login
+  note over Auth, DB
+    Password reset changes credentials,
+    not RecruitBook role / account_status.
+  end note
+end
+
+User -> App : Log out
+App -> Auth : Sign out
+Auth -> Auth : Invalidate session
+Auth --> App : Session invalidated
+App --> User : Redirect to login / public landing page
+
+@enduml

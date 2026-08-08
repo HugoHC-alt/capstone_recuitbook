@@ -1,0 +1,131 @@
+@startuml counselor_review_domain_subset
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  AttributeFontColor #0F172A
+  AttributeFontSize 13
+}
+
+title RecruitBook Batch 4 — Counselor Review Domain Subset
+
+' Reused objects (Batch 1/2/3 — unchanged this batch)
+class ApplicationUser <<verified-identity>> {
+  id : uuid
+  role : user_role
+  account_status : account_status
+}
+
+class StudentProfile <<sensitive>> {
+  id : uuid
+  application_user_id : uuid
+  ' Batch 2 content columns unchanged.
+  ' NO stored review/profile status — ever.
+}
+
+class CounselorStudentLink <<authorization>> {
+  id : uuid
+  student_application_user_id : uuid
+  counselor_application_user_id : uuid
+  status : counselor_link_status
+  ' Batch 3 consent edge — UNCHANGED in Batch 4.
+  ' 'accepted' at query time gates ALL counselor review access.
+}
+
+' New Batch 4 objects
+class CounselorReviewRequest <<workflow>> {
+  id : uuid
+  counselor_student_link_id : uuid
+  student_application_user_id : uuid
+  counselor_application_user_id : uuid
+  student_message : text <= 1000, nullable
+  status : counselor_review_status
+  requested_at : timestamptz
+  responded_at : timestamptz, nullable
+  withdrawn_at : timestamptz, nullable
+}
+
+class CounselorFeedbackNote <<review>> {
+  id : uuid
+  counselor_review_request_id : uuid UNIQUE
+  counselor_application_user_id : uuid
+  feedback_text : text <= 4000, plain
+  created_at : timestamptz
+  ' IMMUTABLE: no UPDATE/DELETE for any role.
+}
+
+class RowLevelSecurityPolicy <<policy>> {
+  is_student_owner_of_accepted_link(link_id)
+  is_counselor_of_live_accepted_link(link_id)
+  ' reuses: is_verified_counselor(),
+  '   current_application_user_id(),
+  '   is_active_student(), is_platform_admin()
+}
+
+ApplicationUser "1 student" --> "0..*" CounselorReviewRequest : submits / withdraws
+ApplicationUser "1 counselor" --> "0..*" CounselorReviewRequest : declines / completes
+ApplicationUser "1 counselor" --> "0..*" CounselorFeedbackNote : authors (self-bound)
+CounselorStudentLink "1 accepted" --> "0..*" CounselorReviewRequest : anchors + authorizes
+CounselorReviewRequest "1" --> "0..1" CounselorFeedbackNote : completed by exactly one note
+CounselorStudentLink ..> StudentProfile : Batch 3 SELECT-only visibility (unchanged)
+RowLevelSecurityPolicy ..> CounselorReviewRequest : enforces
+RowLevelSecurityPolicy ..> CounselorFeedbackNote : enforces
+
+note right of CounselorReviewRequest
+  Status↔column CHECKs (fail closed):
+  requested  => responded_at NULL, withdrawn_at NULL
+  completed/declined => responded_at NOT NULL, withdrawn_at NULL
+  withdrawn  => withdrawn_at NOT NULL, responded_at NULL
+  Partial unique: one 'requested' row per link.
+  Column-hardening: UPDATE granted ONLY on
+  (status, responded_at, withdrawn_at).
+end note
+
+note bottom of CounselorFeedbackNote
+  First counselor WRITE target.
+  Student: SELECT own only (survives revocation).
+  Counselor: INSERT + SELECT gated on the
+  LIVE accepted link (revocation hides all).
+  Admin: SELECT-only. Admissions: zero.
+end note
+
+note bottom of StudentProfile
+  Batch 4 adds NO counselor write policy here.
+  The Batch 3 SELECT-only boundary on all four
+  profile tables is preserved verbatim
+  (regression gate in every Batch 4 review).
+end note
+
+@enduml

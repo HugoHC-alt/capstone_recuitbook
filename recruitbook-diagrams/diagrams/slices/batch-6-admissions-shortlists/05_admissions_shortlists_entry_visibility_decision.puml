@@ -1,0 +1,117 @@
+@startuml admissions_shortlists_entry_visibility_decision
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+title RecruitBook Batch 6 — Saved Shortlist Entry Renderability Decision
+
+' ============================================================
+' NOT a state machine — no named ShortlistEntry states, no
+' lifecycle transitions, no state-model number. This is a
+' single per-entry decision, re-evaluated fresh at query time
+' for EVERY saved entry on EVERY read of the saved list.
+' ============================================================
+
+start
+:Officer opens /admissions/dashboard\n"Saved students" section\n(one stored ShortlistEntry row under evaluation);
+
+if (1. Access precondition:\nis_verified_admissions_officer()?) then (no)
+  #FEE2E2:No saved-list access at all\n(not specific to any one entry);
+  stop
+else (yes)
+endif
+
+if (2. RLS SELECT ownership gate:\nadmissions_officer_application_user_id\n= current_application_user_id()?) then (no)
+  #FEE2E2:Entry invisible to this caller\n(belongs to a different officer);
+  stop
+else (yes)
+endif
+
+if (3. Live visibility gate:\nis_admissions_visible_profile(\nstudent_profile_id)?) then (no)
+  #FEE2E2:Entry silently ABSENT from the\nrendered list — no distinct stale\nstate, no reason shown, no count,\nno placeholder;
+  stop
+else (yes)
+  #DCFCE7:Entry RENDERS — ONLY the four\napproved summary fields\n(preferredName, country,\ncityRegion, intendedMajor);
+  stop
+endif
+
+note right
+  This decision governs RENDERABILITY of an
+  already-saved row in THIS ONE query only.
+  The underlying ShortlistEntry row is never
+  changed or deleted by this decision — only
+  its visibility in the rendered list this time.
+end note
+
+note right
+  Silent absence is indistinguishable across
+  causes: "doesn't exist," "belongs to someone
+  else," "hidden," "withdrawn," or "suspended
+  owner" all look identical — no oracle.
+end note
+
+legend right
+  Cross-cutting rules:
+  * Gate 3 reuses the existing, unchanged Batch 5
+    is_admissions_visible_profile(profile_id) helper —
+    no new helper, no new state-model number.
+  * Re-evaluated fresh on every read; no cached or
+    derived visibility field exists anywhere.
+  * No named/multiple Shortlist model, no Remove flow,
+    and no student/counselor actor — see Group 1c/1e.
+  --
+  Resurfacing: because the row is never touched by
+  this decision, a retained entry automatically
+  resurfaces on a LATER query once the profile becomes
+  effectively visible again — no re-save, no explicit
+  "restore" action, no stored state transition.
+  --
+  Scope boundary: this decision governs the saved-LIST
+  entry rendering only. The existing
+  /admissions/students/[id] detail route independently
+  re-gates with the SAME Batch 5 helper
+  (is_admissions_visible_profile) on its own separate
+  request — it does NOT share or trust this list-time
+  decision's result.
+endlegend
+
+@enduml

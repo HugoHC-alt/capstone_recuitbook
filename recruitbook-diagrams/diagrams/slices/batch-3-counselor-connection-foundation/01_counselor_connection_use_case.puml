@@ -1,0 +1,147 @@
+@startuml counselor_connection_use_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+title RecruitBook Batch 3 — Counselor Connection Foundation (Use Cases)
+
+left to right direction
+
+' ============================================================
+' ACTORS — only Student, Verified Counselor, and Platform
+' Administrator connect to Batch 3 use cases. Pending Counselor
+' and Admissions Officer are deliberately NOT actors here (see
+' the deferred note) rather than shown as dangling icons.
+' ============================================================
+actor "Student\n(authenticated, active, owner)" as Student
+actor "Verified Counselor\n(role=counselor, status=verified)" as Counselor
+actor "Platform Administrator" as Admin
+
+rectangle "Batch 3: Counselor Connection Foundation" {
+
+  package "Link Management (Student)" as PKG_Student {
+    usecase "Request Counselor Link\n(by email)" as UC_Request
+    usecase "View Link Status" as UC_ViewStatus
+    usecase "Revoke Link" as UC_Revoke
+  }
+
+  package "Link Response & Linked Students\n(Verified Counselor)" as PKG_Counselor {
+    usecase "View Pending Requests\n(addressed to own email)" as UC_ViewPending
+    usecase "Accept Link Request" as UC_Accept
+    usecase "Decline Link Request" as UC_Decline
+    usecase "View Linked Students" as UC_ViewLinked
+    usecase "View Linked Student Profile\n(read-only)" as UC_ViewProfile
+  }
+
+  package "Admin Moderation (Read Only)" as PKG_Admin {
+    usecase "Read Link Records\n(moderation / support)" as UC_AdminRead
+  }
+}
+
+' ============================================================
+' ACTOR ASSOCIATIONS
+' ============================================================
+Student --> UC_Request
+Student --> UC_ViewStatus
+Student --> UC_Revoke
+
+Counselor --> UC_ViewPending
+Counselor --> UC_Accept
+Counselor --> UC_Decline
+Counselor --> UC_ViewLinked
+
+Admin --> UC_AdminRead
+
+' Read-only profile visibility is reached only THROUGH a linked
+' student — never as a standalone use case.
+UC_ViewLinked ..> UC_ViewProfile : <<include>>
+
+' ============================================================
+' NOTES
+' ============================================================
+note top of Counselor
+  Requires role=counselor AND
+  account_status=verified. Pending/
+  denied/suspended counselors are blocked.
+  Re-checked server-side per action.
+end note
+
+note bottom of UC_ViewProfile
+  SELECT-only. Read-only Batch 2 profile
+  aggregate; NO counselor write path.
+  Reached only via an ACCEPTED link.
+end note
+
+note bottom of UC_Request
+  Email-addressed, late binding. No counselor
+  lookup at request time (no existence oracle).
+end note
+
+note as N_Deferred
+  Deferred / out of scope:
+  * Counselor review + feedback -> Batch 4.
+  * Admissions discovery -> Batch 5.
+  * Pending Counselor is NOT an actor here.
+  * No HighSchool / school-match.
+  * No token / email invitations; no CounselorInvitation.
+  * No admin link-management UI (admin is read-only via RLS).
+  * No uploads, no AI, no publishing.
+  * Zero service-role.
+end note
+
+@enduml

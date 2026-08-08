@@ -1,0 +1,467 @@
+@startuml auth_use_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication & Access Control
+
+left to right direction
+
+' ============================================================
+' ACTORS
+' Human actors are declared together so generalization lines
+' are short. External actors are declared last to land right.
+' ============================================================
+
+' Unauthenticated actor
+actor "Public Visitor" as PublicVisitor
+
+' Base authenticated actor — shared session behavior attaches here.
+' Role actors inherit these connections via generalization.
+actor "Authenticated User" as AuthUser
+
+' Role actors — each connects only to its own role-specific use cases.
+actor Student as Student
+actor Counselor as Counselor
+actor "Admissions Officer" as AdmissionsOfficer
+actor "Platform Administrator" as PlatformAdmin
+
+' External system actors
+actor "Email Service" as EmailService <<external>>
+actor "Supabase Auth" as SupabaseAuth <<external>>
+
+' ============================================================
+' ACTOR GENERALIZATION
+' ============================================================
+
+Student --|> AuthUser
+Counselor --|> AuthUser
+AdmissionsOfficer --|> AuthUser
+PlatformAdmin --|> AuthUser
+
+' ============================================================
+' SYSTEM BOUNDARY
+' ============================================================
+
+rectangle "RecruitBook Authentication & Access Control" {
+
+  ' ----------------------------------------------------------
+  ' Registration & Authentication
+  ' Unauthenticated flows only. Log In leads to session creation.
+  ' ----------------------------------------------------------
+
+  package "Registration & Authentication" as PKG_Auth {
+    usecase "Register Account" as UC_Register
+    usecase "Select Role" as UC_SelectRole
+    usecase "Verify Email" as UC_VerifyEmail
+    usecase "Log In" as UC_Login
+    usecase "Log Out" as UC_Logout
+    usecase "Request Password Reset" as UC_RequestReset
+    usecase "Complete Password Reset" as UC_CompleteReset
+  }
+
+  ' ----------------------------------------------------------
+  ' Application Identity & Routing
+  ' ----------------------------------------------------------
+
+  package "Application Identity & Routing" as PKG_Identity {
+    usecase "Create Application User Profile" as UC_CreateProfile
+    usecase "Store Role and Account Status" as UC_StoreRole
+    usecase "Read Role and Account Status" as UC_ReadRole
+    usecase "Redirect After Login" as UC_Redirect
+    usecase "Deny Unauthorized Access" as UC_DenyAccess
+  }
+
+  ' ----------------------------------------------------------
+  ' Protected Dashboards
+  ' Access Protected Dashboard is the shared base use case.
+  ' All specific dashboards include it.
+  ' Deny Unauthorized Access extends it here once, not per dashboard.
+  ' ----------------------------------------------------------
+
+  package "Protected Dashboards" as PKG_Dashboards {
+    usecase "Access Protected Dashboard" as UC_AccessProtected
+    usecase "Access Student Dashboard" as UC_StudentDash
+    usecase "View Counselor Pending Approval Page" as UC_CounselorPending
+    usecase "Access Counselor Dashboard" as UC_CounselorDash
+    usecase "View Admissions Pending Approval Page" as UC_AdmissionsPending
+    usecase "Access Admissions Dashboard" as UC_AdmissionsDash
+    usecase "Access Admin Dashboard" as UC_AdminDash
+  }
+
+  ' ----------------------------------------------------------
+  ' Admin Control
+  ' ----------------------------------------------------------
+
+  package "Admin Control" as PKG_Admin {
+    usecase "Approve Counselor Account" as UC_ApproveCounselor
+    usecase "Approve Admissions Officer Account" as UC_ApproveAdmissions
+    usecase "Suspend User Account" as UC_SuspendUser
+  }
+
+  ' ----------------------------------------------------------
+  ' External Service Calls (system-initiated)
+  ' ----------------------------------------------------------
+
+  package "External Service Calls" as PKG_External {
+    usecase "Send Verification Email" as UC_SendVerification
+    usecase "Send Password Reset Email" as UC_SendReset
+    usecase "Authenticate Credentials" as UC_AuthCreds
+  }
+
+}
+
+' ============================================================
+' ACTOR ASSOCIATIONS
+' ============================================================
+
+' --- Public Visitor: unauthenticated flows only ---
+PublicVisitor --> UC_Register
+PublicVisitor --> UC_VerifyEmail
+PublicVisitor --> UC_Login
+PublicVisitor --> UC_RequestReset
+PublicVisitor --> UC_CompleteReset
+
+' --- Authenticated User: shared post-login behavior ---
+' Log Out and Access Protected Dashboard apply to every authenticated role.
+' Role actors inherit these through generalization — no duplicate lines needed.
+AuthUser --> UC_Logout
+AuthUser --> UC_AccessProtected
+
+' --- Student: role-specific use case only ---
+Student --> UC_StudentDash
+
+' --- Counselor: role-specific use cases only ---
+Counselor --> UC_CounselorPending
+Counselor --> UC_CounselorDash
+
+' --- Admissions Officer: role-specific use cases only ---
+AdmissionsOfficer --> UC_AdmissionsPending
+AdmissionsOfficer --> UC_AdmissionsDash
+
+' --- Platform Administrator: role-specific use cases only ---
+PlatformAdmin --> UC_AdminDash
+PlatformAdmin --> UC_ApproveCounselor
+PlatformAdmin --> UC_ApproveAdmissions
+PlatformAdmin --> UC_SuspendUser
+
+' --- External actors ---
+EmailService --> UC_SendVerification
+EmailService --> UC_SendReset
+SupabaseAuth --> UC_AuthCreds
+
+' ============================================================
+' INCLUDE RELATIONSHIPS
+' ============================================================
+
+' Registration flow
+UC_Register ..> UC_SelectRole : <<include>>
+UC_Register ..> UC_CreateProfile : <<include>>
+UC_Register ..> UC_StoreRole : <<include>>
+UC_Register ..> UC_SendVerification : <<include>>
+
+' Login flow
+UC_Login ..> UC_AuthCreds : <<include>>
+UC_Login ..> UC_ReadRole : <<include>>
+UC_Login ..> UC_Redirect : <<include>>
+
+' Password reset flow
+UC_RequestReset ..> UC_SendReset : <<include>>
+
+' Shared protected dashboard pattern: read role and status once
+UC_AccessProtected ..> UC_ReadRole : <<include>>
+
+' Specific dashboards include the shared base (all within same package — short arrows)
+UC_StudentDash ..> UC_AccessProtected : <<include>>
+UC_CounselorPending ..> UC_AccessProtected : <<include>>
+UC_CounselorDash ..> UC_AccessProtected : <<include>>
+UC_AdmissionsPending ..> UC_AccessProtected : <<include>>
+UC_AdmissionsDash ..> UC_AccessProtected : <<include>>
+UC_AdminDash ..> UC_AccessProtected : <<include>>
+
+' Admin control updates account status
+UC_ApproveCounselor ..> UC_StoreRole : <<include>>
+UC_ApproveAdmissions ..> UC_StoreRole : <<include>>
+UC_SuspendUser ..> UC_StoreRole : <<include>>
+
+' ============================================================
+' EXTEND RELATIONSHIPS
+' ============================================================
+
+' Deny Unauthorized Access extends the shared base once, not each individual dashboard
+UC_DenyAccess ..> UC_AccessProtected : <<extend>>
+
+' ============================================================
+' NOTES
+' ============================================================
+
+note top of UC_Register
+  Public users may register as Student,
+  Counselor, or Admissions Officer only.
+  Platform Administrator accounts are
+  seeded or manually assigned and
+  cannot be self-registered.
+end note
+
+note right of SupabaseAuth
+  Supabase Auth handles credential
+  authentication only (sessions,
+  password hashing, token issuance).
+  RecruitBook application database
+  stores role and account status
+  and is the authoritative source
+  for all access decisions.
+end note
+
+note bottom of UC_ReadRole
+  All protected routes enforce role
+  and account status server-side
+  via middleware or layout function.
+  UI hiding alone is not sufficient
+  authorization. Suspended users are
+  denied access regardless of a
+  valid Supabase session.
+end note
+
+@enduml

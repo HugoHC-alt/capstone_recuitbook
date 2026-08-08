@@ -1,0 +1,432 @@
+@startuml auth_activity
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' Required in every RecruitBook .puml diagram file.
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam LegendBackgroundColor #FFFFFF
+skinparam LegendBorderColor #CBD5E1
+skinparam LegendFontColor #0F172A
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam package {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam rectangle {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam actor {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+  FontStyle bold
+}
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  FontSize 14
+}
+
+skinparam classAttributeIconSize 0
+
+skinparam class {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  HeaderBackgroundColor #DBEAFE
+  AttributeFontColor #334155
+  MethodFontColor #334155
+  StereotypeFontColor #475569
+
+  BackgroundColor<<security>> #FEE2E2
+  BorderColor<<security>> #B91C1C
+
+  BackgroundColor<<authorization>> #DBEAFE
+  BorderColor<<authorization>> #1D4ED8
+
+  BackgroundColor<<privacy>> #F3E8FF
+  BorderColor<<privacy>> #7E22CE
+
+  BackgroundColor<<sensitive>> #FEF3C7
+  BorderColor<<sensitive>> #B45309
+
+  BackgroundColor<<audit>> #DCFCE7
+  BorderColor<<audit>> #15803D
+
+  BackgroundColor<<review>> #FEF3C7
+  BorderColor<<review>> #B45309
+
+  BackgroundColor<<trust>> #DCFCE7
+  BorderColor<<trust>> #15803D
+
+  BackgroundColor<<policy>> #DBEAFE
+  BorderColor<<policy>> #1D4ED8
+
+  BackgroundColor<<external>> #CFFAFE
+  BorderColor<<external>> #0E7490
+
+  BackgroundColor<<workflow>> #F1F5F9
+  BorderColor<<workflow>> #64748B
+
+  BackgroundColor<<institution>> #F1F5F9
+  BorderColor<<institution>> #64748B
+
+  BackgroundColor<<storage>> #F1F5F9
+  BorderColor<<storage>> #334155
+
+  BackgroundColor<<AI-generated>> #F3E8FF
+  BorderColor<<AI-generated>> #7E22CE
+
+  BackgroundColor<<value-object>> #FFFFFF
+  BorderColor<<value-object>> #64748B
+
+  BackgroundColor<<safe-view>> #DCFCE7
+  BorderColor<<safe-view>> #15803D
+
+  BackgroundColor<<boundary>> #DBEAFE
+  BorderColor<<boundary>> #1D4ED8
+}
+
+skinparam object {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam component {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StereotypeFontColor #475569
+}
+
+skinparam node {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam database {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam cloud {
+  BackgroundColor #CFFAFE
+  BorderColor #0E7490
+  FontColor #0F172A
+}
+
+skinparam queue {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam folder {
+  BackgroundColor #F1F5F9
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam frame {
+  BackgroundColor #F8FAFC
+  BorderColor #64748B
+  FontColor #0F172A
+}
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #B45309
+  StartColor #15803D
+  EndColor #B91C1C
+  BarColor #64748B
+}
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+skinparam sequence {
+  ArrowColor #334155
+  ArrowFontColor #0F172A
+  ActorBackgroundColor #DBEAFE
+  ActorBorderColor #1D4ED8
+  ActorFontColor #0F172A
+  ParticipantBackgroundColor #FFFFFF
+  ParticipantBorderColor #2563EB
+  ParticipantFontColor #0F172A
+  LifeLineBorderColor #CBD5E1
+  LifeLineBackgroundColor #F8FAFC
+  BoxBackgroundColor #F1F5F9
+  BoxBorderColor #64748B
+  GroupBackgroundColor #F8FAFC
+  GroupBorderColor #CBD5E1
+}
+
+skinparam participant {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+
+skinparam boundary {
+  BackgroundColor #DBEAFE
+  BorderColor #1D4ED8
+  FontColor #0F172A
+}
+
+skinparam control {
+  BackgroundColor #FEF3C7
+  BorderColor #B45309
+  FontColor #0F172A
+}
+
+skinparam entity {
+  BackgroundColor #DCFCE7
+  BorderColor #15803D
+  FontColor #0F172A
+}
+
+skinparam collections {
+  BackgroundColor #F1F5F9
+  BorderColor #334155
+  FontColor #0F172A
+}
+
+skinparam card {
+  BackgroundColor #FFFFFF
+  BorderColor #CBD5E1
+  FontColor #0F172A
+}
+
+title RecruitBook Batch 1 — Authentication, Role Identity & Protected Routing
+
+' ============================================================
+' A — REGISTRATION & EMAIL VERIFICATION
+' ============================================================
+
+|#DBEAFE| User / Browser|
+start
+:Enter email, password,\nand select role;
+
+|#F1F5F9| RecruitBook App|
+if (Selected role allowed\nfor public registration?) then (yes — Student /\nCounselor / Admissions Officer)
+else (no — Platform Administrator)
+  #FEE2E2:Reject: Platform Administrator\naccounts cannot be self-registered;
+  stop
+endif
+
+|#CFFAFE| Supabase Auth|
+:Create auth user;
+
+|#FEF3C7| Email Service|
+:Send email verification link;
+
+|#DCFCE7| RecruitBook Database|
+:Create application user profile;\nStore role and initial account_status;
+
+|User / Browser|
+:Click email verification link;
+
+|Supabase Auth|
+:Verify email token;
+
+|RecruitBook Database|
+:Set account_status by role:\n  Student              → active\n  Counselor            → pending_approval\n  Admissions Officer   → pending_approval;
+
+stop
+
+' ============================================================
+' B — LOGIN & ROLE-BASED REDIRECT
+' ============================================================
+
+|User / Browser|
+start
+:Submit credentials;
+
+note right
+  Supabase Auth handles credentials
+  and sessions. Authentication is
+  not authorization. RecruitBook's
+  database is the source of truth
+  for role and account_status.
+end note
+
+|Supabase Auth|
+if (Credentials valid?) then (yes)
+  :Return session token;
+else (no)
+  |RecruitBook App|
+  #FEE2E2:Show login error;
+  stop
+endif
+
+|RecruitBook App|
+:Read application user profile\nfrom database;
+
+|RecruitBook Database|
+:Return profile, role, account_status;
+
+|RecruitBook App|
+if (Profile exists?) then (yes)
+else (no — missing profile)
+  #FEE2E2:Account recovery / error state;
+  stop
+endif
+
+if (Account suspended?) then (yes)
+  #FEE2E2:Redirect to Unauthorized Page;
+  stop
+else (no)
+endif
+
+switch (Role + account_status?)
+case (Student —\nactive / verified)
+  :Redirect to Student Dashboard;
+case (Counselor —\npending_approval)
+  :Redirect to Counselor\nPending Approval Page;
+case (Counselor — verified)
+  :Redirect to Counselor Dashboard;
+case (Admissions Officer —\npending_approval)
+  :Redirect to Admissions\nPending Approval Page;
+case (Admissions Officer —\nverified)
+  :Redirect to Admissions Dashboard;
+case (Platform Administrator —\nactive / verified)
+  :Redirect to Admin Dashboard;
+case (other)
+  #FEE2E2:Redirect to Unauthorized Page;
+endswitch
+
+stop
+
+' ============================================================
+' C — PROTECTED ROUTE ACCESS
+' ============================================================
+
+|User / Browser|
+start
+:Request protected route\n(navigation or direct URL);
+
+note right
+  Protected routes must enforce
+  server-side or middleware / layout
+  checks. UI hiding alone is not
+  sufficient authorization.
+end note
+
+|RecruitBook App|
+if (Valid Supabase session?\n(middleware / layout check)) then (yes)
+else (no — missing or expired)
+  :Redirect to Login Page;
+  stop
+endif
+
+:Read role and account_status\nfrom database;
+
+|RecruitBook Database|
+:Return role and account_status;
+
+|RecruitBook App|
+if (Route matches required\nrole and account_status?) then (yes — authorized)
+  :Render protected dashboard;
+else (no — unauthorized)
+  #FEE2E2:Redirect to Unauthorized Page;
+endif
+
+stop
+
+' ============================================================
+' D — PASSWORD RESET & LOGOUT
+' ============================================================
+
+|User / Browser|
+start
+:Select "Forgot Password"\nand enter email;
+
+|RecruitBook App|
+:Request password reset\nvia Supabase Auth;
+
+|Supabase Auth|
+:Generate single-use expiring token;
+
+|Email Service|
+:Send password reset email;
+
+|User / Browser|
+:Click reset link;
+
+|Supabase Auth|
+if (Token valid\nand not expired?) then (yes)
+  :Update password hash;
+else (no — expired or already used)
+  |RecruitBook App|
+  #FEE2E2:Show error — request new link;
+  stop
+endif
+
+|RecruitBook App|
+:Redirect to Login Page;
+stop
+
+' --- Logout ---
+
+|User / Browser|
+start
+:Select "Log Out";
+
+|RecruitBook App|
+:Call Supabase Auth sign-out;
+
+|Supabase Auth|
+:Invalidate session token;
+
+|RecruitBook App|
+:Redirect to login / public page;
+stop
+
+@enduml

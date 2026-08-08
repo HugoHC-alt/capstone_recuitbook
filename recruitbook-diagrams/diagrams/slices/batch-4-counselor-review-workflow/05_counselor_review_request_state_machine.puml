@@ -1,0 +1,102 @@
+@startuml counselor_review_request_state_machine
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+title RecruitBook Batch 4 — CounselorReviewRequest State Machine (SM-14)
+
+' ============================================================
+' Lifecycle of a student-initiated review request. DB enum
+' counselor_review_status uses the SAME names as the diagram
+' ('requested' — deliberately NOT 'pending', to stay
+' unambiguous next to counselor_student_links.status).
+' ============================================================
+
+[*] --> Requested : CounselorReviewRequest.submit(student, link)\n[active student; OWN accepted link;\nforced status='requested'; one active per link]
+
+Requested --> Completed : CounselorReviewRequest.complete(counselor, feedbackText)\n[addressed verified counselor; LIVE accepted link;\nfeedback note inserted first, then status CAS]
+Requested --> Declined : CounselorReviewRequest.decline(counselor)\n[addressed verified counselor; LIVE accepted link;\nCAS zero rows => generic]
+Requested --> Withdrawn : CounselorReviewRequest.withdraw(student)\n[owning student; WITH CHECK forces 'withdrawn']
+
+Completed --> [*]
+Declined --> [*]
+Withdrawn --> [*]
+
+note right of Requested
+  DB status = 'requested'.
+  Anchored to ONE accepted
+  CounselorStudentLink (FK).
+  If that link is later revoked, the row
+  stays Requested but is DEAD to the
+  counselor (live-link gate); the student
+  may withdraw it; a NEW link does not
+  revive it.
+end note
+
+note right of Completed
+  Terminal. Exactly one immutable
+  CounselorFeedbackNote exists
+  (request_id UNIQUE).
+  Student reads it forever (own history);
+  counselor reads it only while the
+  link stays accepted.
+end note
+
+note bottom of Declined
+  Terminal. No feedback note.
+  A fresh submission creates a NEW row.
+end note
+
+note bottom of Withdrawn
+  Terminal. Student-only transition.
+  A fresh submission creates a NEW row.
+end note
+
+note top of Requested
+  Invariants (SM-14):
+  * Student cannot reach Completed/Declined (withdraw-only WITH CHECK).
+  * Counselor cannot submit or withdraw a request.
+  * Only the ADDRESSED verified counselor with a LIVE accepted link
+    may complete/decline (pending/suspended blocked — STATE-R-09).
+  * Feedback notes are immutable; no UPDATE/DELETE for any role.
+  * No stored state ever lands on StudentProfile.
+  * Admissions officers: no access. platform_admin: SELECT-only.
+end note
+
+@enduml

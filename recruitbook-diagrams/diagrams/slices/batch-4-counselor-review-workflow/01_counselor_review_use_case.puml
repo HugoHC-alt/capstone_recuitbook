@@ -1,0 +1,107 @@
+@startuml counselor_review_use_case
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam usecase {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+}
+skinparam actor {
+  BackgroundColor #FFFFFF
+  BorderColor #334155
+}
+
+title RecruitBook Batch 4 — Counselor Review Workflow Use Case Slice
+
+actor "Student\n(profile owner,\nactive)" as Student
+actor "Verified Counselor\n(live accepted link)" as Counselor
+actor "Platform\nAdministrator" as Admin
+
+rectangle "Batch 4 — Counselor Review Workflow" {
+  usecase "Submit review request\nto an accepted-linked counselor" as UC_Submit
+  usecase "View own review requests\nand statuses" as UC_ViewOwn
+  usecase "Withdraw a\nRequested request" as UC_Withdraw
+  usecase "Read received\ncounselor feedback" as UC_ReadFeedback
+
+  usecase "View review queue\n(live accepted-linked\nstudents only)" as UC_Queue
+  usecase "Decline a\nreview request" as UC_Decline
+  usecase "Complete request:\nwrite ONE feedback note\n(immutable, plain text)" as UC_Complete
+
+  usecase "View link + review records\n(read-only moderation)" as UC_AdminView
+}
+
+Student --> UC_Submit
+Student --> UC_ViewOwn
+Student --> UC_Withdraw
+Student --> UC_ReadFeedback
+
+Counselor --> UC_Queue
+Counselor --> UC_Decline
+Counselor --> UC_Complete
+
+Admin --> UC_AdminView
+
+note right of UC_Submit
+  Requires an ACCEPTED CounselorStudentLink
+  (student picks from own links — no email
+  entry, no enumeration surface).
+  Forced status='requested'.
+end note
+
+note right of UC_Complete
+  First counselor WRITE surface.
+  Writes ONLY to counselor_feedback_notes +
+  the request status — NEVER to the
+  student-owned Batch 2 profile tables.
+end note
+
+note bottom of UC_Queue
+  Live-link gate at query time:
+  revocation removes queue, response,
+  feedback write AND the counselor's
+  read of their own past notes.
+end note
+
+note bottom of UC_ReadFeedback
+  Student read is ownership-only and
+  SURVIVES link revocation (own history).
+end note
+
+note as N_Excluded
+  Deliberately NOT actors:
+  * Pending/suspended counselor (verified gate fails)
+  * Admissions officer (zero Batch 4 access)
+  * Other students (ownership gate fails)
+end note
+
+@enduml

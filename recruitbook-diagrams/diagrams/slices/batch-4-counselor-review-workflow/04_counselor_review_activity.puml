@@ -1,0 +1,109 @@
+@startuml counselor_review_activity
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam activity {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  DiamondBackgroundColor #EFF6FF
+  DiamondBorderColor #2563EB
+}
+
+title RecruitBook Batch 4 — Counselor Review Activity (Submit + Complete)
+
+partition "Student: submit review request" {
+  start
+  :Open /student/counselor
+  (reuses requireRouteAccess('/student/dashboard'));
+  :Server action re-verifies ACTIVE STUDENT
+  (assert; page guard never sole boundary);
+  :Student picks one of their OWN accepted links
+  + optional student_message (<=1000, plain text);
+  :Validate + trim server-side;
+  :Bare INSERT counselor_review_requests
+  (link id is a lookup key; RLS WITH CHECK:
+  is_student_owner_of_accepted_link(link_id),
+  party ids match the link row,
+  forced status='requested');
+  if (RLS / CHECK satisfied?) then (yes)
+    :Generic "request recorded" + revalidate;
+  else (no — foreign/stale link, duplicate active request)
+    :One fixed generic message
+    (no oracle, no raw DB error);
+  endif
+}
+
+partition "Counselor: review + complete" {
+  :Open /counselor/dashboard queue
+  (reuses the counselor+verified guard);
+  :Queue lists ONLY requests where
+  is_counselor_of_live_accepted_link(link_id)
+  — revoked/declined links yield zero rows;
+  :Open /counselor/students/[id]
+  (Batch 3 read-only profile view — unchanged);
+  if (Decline or Complete?) then (decline)
+    :UPDATE request status CAS:
+    requested -> declined
+    (live link + own counselor id;
+    zero rows => generic);
+    stop
+  else (complete)
+    :Write feedback_text (<=4000, plain);
+    :Step 1 — bare INSERT counselor_feedback_notes
+    (request_id UNIQUE; WITH CHECK: addressed
+    counselor, request still 'requested',
+    live accepted link, author self-bound);
+    :Step 2 — UPDATE request status CAS:
+    requested -> completed;
+    note right
+      Feedback-first order (frozen):
+      a failure between steps leaves
+      feedback on a 'requested' row —
+      benign, fails closed; 23505 on
+      retry = note exists, proceed to CAS.
+      Future: atomic SECURITY DEFINER RPC.
+    end note
+  endif
+}
+
+partition "Student: read feedback" {
+  :/student/counselor shows request status
+  + feedback_text (ownership-only SELECT,
+  plain escaped JSX);
+  note right
+    Student read SURVIVES later revocation.
+    Counselor read of the same note does NOT
+    (live-link gate at query time).
+  end note
+  stop
+}
+
+@enduml

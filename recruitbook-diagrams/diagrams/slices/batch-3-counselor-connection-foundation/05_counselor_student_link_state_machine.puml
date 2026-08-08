@@ -1,0 +1,95 @@
+@startuml counselor_student_link_state_machine
+
+' ============================================================
+' RecruitBook Standard PlantUML Style Configuration
+' ============================================================
+
+skinparam backgroundColor #F8FAFC
+skinparam shadowing false
+skinparam handwritten false
+skinparam roundcorner 14
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+skinparam defaultFontColor #0F172A
+skinparam dpi 160
+skinparam padding 4
+skinparam nodesep 55
+skinparam ranksep 45
+
+skinparam ArrowColor #334155
+skinparam ArrowFontColor #0F172A
+skinparam ArrowFontSize 13
+skinparam ArrowThickness 1.2
+
+skinparam TitleFontName Arial
+skinparam TitleFontSize 22
+skinparam TitleFontColor #020617
+skinparam TitleFontStyle bold
+
+skinparam NoteBackgroundColor #FEF3C7
+skinparam NoteBorderColor #B45309
+skinparam NoteFontColor #78350F
+skinparam NoteFontSize 13
+
+skinparam state {
+  BackgroundColor #FFFFFF
+  BorderColor #2563EB
+  FontColor #0F172A
+  StartColor #15803D
+  EndColor #B91C1C
+}
+
+title RecruitBook Batch 3 — CounselorStudentLink State Machine (SM-13)
+
+' ============================================================
+' Lifecycle of the per-student consent link. DB enum in [];
+' "Requested" is the diagram/catalog name for DB status='pending'.
+' ============================================================
+
+[*] --> Requested : CounselorStudentLink.request(student, counselorEmail)\n[active student; status=pending; counselor id NULL]
+
+Requested --> Accepted : CounselorStudentLink.accept(counselor)\n[verified counselor; email = counselor_email;\nself-bind counselor id (CAS)]
+Requested --> Declined : CounselorStudentLink.decline(counselor)\n[verified counselor; email = counselor_email;\nself-bind counselor id (CAS)]
+Requested --> Revoked : CounselorStudentLink.revoke(student)\n[owning student]
+Accepted --> Revoked : CounselorStudentLink.revoke(student)\n[owning student]
+
+Declined --> [*]
+Revoked --> [*]
+
+note right of Requested
+  DB status = 'pending'.
+  No visibility granted.
+  No counselor lookup at insert
+  (anti-enumeration).
+end note
+
+note right of Accepted
+  counselor_application_user_id bound.
+  Grants SELECT-only profile visibility
+  (is_linked_counselor_for_profile).
+end note
+
+note bottom of Declined
+  Terminal. No visibility. counselor_application_user_id
+  is bound (records who declined). Reveals counselor
+  existence only via the counselor's own act.
+  A new request creates a NEW row.
+end note
+
+note bottom of Revoked
+  Terminal. Visibility removed IMMEDIATELY
+  (helper checks status='accepted' at query time).
+  A new request creates a NEW row.
+end note
+
+note top of Requested
+  Invariants (SM-13):
+  * Student cannot self-accept (no student accept/decline transition).
+  * Counselor cannot create a link.
+  * Only a VERIFIED counselor addressed by counselor_email may
+    accept/decline (pending/denied/suspended blocked — STATE-R-09).
+  * Only Accepted grants SELECT-only visibility; no counselor write path.
+  * Admissions officers: no access. platform_admin: SELECT-only, no write.
+end note
+
+@enduml
